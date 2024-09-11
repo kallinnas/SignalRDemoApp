@@ -7,6 +7,7 @@ import * as signalR from '@microsoft/signalr';
 export class SignalrService {
 
   private hubConnection!: signalR.HubConnection;
+  toastr: any;
 
   constructor() { }
 
@@ -20,16 +21,30 @@ export class SignalrService {
       .build();
 
     this.hubConnection.start()
-      .then(() => console.log('Hub conn started!'))
+      .then(() => {
+        console.log('#1 Hub conn started!')
+        this.askServerListener();
+        this.askServer();
+      })
       .catch(err => console.log('Error while srating conn: ' + err));
   }
 
-  askServer() {
-    this.hubConnection.invoke('AskServer', 'Hey!').catch(err => console.log(err));
+  async askServer() {
+    console.log('#3 askServer started!')
+
+    await this.hubConnection.invoke('AskServer', 'Hey!')
+      .then(() => console.log('#5 askServer than()'))
+      .catch(err => console.log(err));
+
+    console.log('#6 Final async promt');
   }
 
   askServerListener() {
-    this.hubConnection.on('AskServerResponse', (response) => { console.log(response) });
+    console.log('#2 askServerListener started!')
+    this.hubConnection.on('AskServerResponse', (response) => {
+      console.log('#4 AskServerResponse listener()');
+      this.toastr.success(response);
+    });
   }
 
   offConnection() {
