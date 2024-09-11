@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+using SignalRDemo.Data;
 using SignalRDemo.HubConfig;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,6 +9,15 @@ builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder
 { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); }));
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
+// Configure DbContext with MySQL
+var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
+// JsonSerializerOptions to handle object cycles
+builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+            options.JsonSerializerOptions.MaxDepth = 128;
+        });
 
 // Default container services.
 builder.Services.AddControllers();
@@ -46,8 +57,25 @@ app.Run();
 // 3) launchSettings: rm { IIS Express } & { SignalRDemo: "launchBrowser": false } 
 // 4) Add to services of Program.cs: Cors, SignalR before AddControllers()
 // 5) Add to middleware of Program: UseRouting, UseCors, UseEndpoints
-// 6) 
+// 6) Scaffolding for models
+// 7) Remove empty constructor from context
+// 8)
 //
+//
+//
+//
+// UI:
+// 1) npm i ngx-toastr
+// and 
+// importProvidersFrom(ToastrModule.forRoot(
+// { enableHtml: true, timeOut: 10000, positionClass: 'toast-top-right', preventDuplicates: false})),
+// 
+// 2)routes
+// 3) auth / home comps
+// 4) service
+//
+//
+// /
 // npm i @microsoft/signalr
-//
+// 
 // ?

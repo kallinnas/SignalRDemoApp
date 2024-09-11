@@ -1,15 +1,18 @@
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import * as signalR from '@microsoft/signalr';
+import { ToastrService } from 'ngx-toastr';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class SignalrService {
 
-  private hubConnection!: signalR.HubConnection;
-  toastr: any;
+  hubConnection!: signalR.HubConnection;
+  personName!: string;
 
-  constructor() { }
+  constructor(
+    private toastr: ToastrService,
+    private router: Router
+  ) { }
 
   startConnection = () => {
     this.hubConnection = new signalR.HubConnectionBuilder()
@@ -22,33 +25,39 @@ export class SignalrService {
 
     this.hubConnection.start()
       .then(() => {
-        console.log('#1 Hub conn started!')
-        this.askServerListener();
-        this.askServer();
+        console.log('#1 Hub conn started!');
+        this.authMeListenerSuccsess();
+        this.authMeListenerFail();
       })
       .catch(err => console.log('Error while srating conn: ' + err));
   }
 
-  async askServer() {
-    console.log('#3 askServer started!')
+  async authMe(username: string, password: string) {
+    console.log('#3 authMe started!')
+    const personDto = { username: username, password: password };
 
-    await this.hubConnection.invoke('AskServer', 'Hey!')
-      .then(() => console.log('#5 askServer than()'))
+    await this.hubConnection.invoke('authMe', personDto)
+      .then(() => console.log('#5 authMe than()'))
+      .finally(() => this.toastr.info("Loading is attempt..."))
       .catch(err => console.log(err));
 
     console.log('#6 Final async promt');
   }
 
-  askServerListener() {
-    console.log('#2 askServerListener started!')
-    this.hubConnection.on('AskServerResponse', (response) => {
-      console.log('#4 AskServerResponse listener()');
-      this.toastr.success(response);
+  authMeListenerSuccsess() {
+    console.log('#2 authMeListenerSuccsess started!')
+
+    this.hubConnection.on('authMeResponseSuccess', (response) => {
+      console.log('#4 authMeResponse listener()');
+      console.log(response);
+      this.personName = response.name;
+      this.toastr.success('Login succsessfully!');
+      this.router.navigate(["/home"]);
     });
   }
 
-  offConnection() {
-    this.hubConnection.off('AskServerResponse');
-  }
+  authMeListenerFail() { this.hubConnection.on("authMeListenerFail", () => this.toastr.error("Wrong credentials!")); }
+
+  offConnection(text: string) { this.hubConnection.off(text); }
 
 }

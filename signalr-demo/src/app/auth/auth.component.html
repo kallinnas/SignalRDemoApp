@@ -1,0 +1,9 @@
+<div fxLayout="column" fxLayoutAlign="center center" style="width: 300px; margin: auto;">
+    <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+
+        <input ngModel type="username" id="username" name="username" placeholder="username">
+        <input ngModel type="password" id="password" name="password" placeholder="password">
+
+        <button type="submit" [disabled]="!form.valid"> {{ 'Login' }} </button>
+    </form>
+</div>
