@@ -1,10 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
-
 namespace SignalRDemo.Models;
 
 public partial class Connections
 {
+    public Connections(int personId, string signalrId, DateTime? timeStamp)
+    {
+        PersonId = personId;
+        SignalrId = signalrId;
+        TimeStamp = timeStamp;
+    }
+
     public int Id { get; set; }
 
     public int PersonId { get; set; }

@@ -1,5 +1,5 @@
 import { ApplicationConfig, importProvidersFrom, provideZoneChangeDetection } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { PreloadAllModules, provideRouter, RouterModule, withPreloading } from '@angular/router';
 import { ToastrModule } from 'ngx-toastr';
 
 import { routes } from './app.routes';
@@ -9,9 +9,10 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     provideClientHydration(),
     provideAnimationsAsync(),
-    importProvidersFrom(ToastrModule.forRoot({ enableHtml: true, timeOut:10000, positionClass: 'toast-top-right', preventDuplicates: false})),
+    importProvidersFrom(ToastrModule.forRoot({ enableHtml: true, timeOut: 10000, positionClass: 'toast-top-right', preventDuplicates: false })),
+    importProvidersFrom(RouterModule)
   ]
 };

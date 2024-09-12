@@ -73,7 +73,7 @@ app.Run();
 // 2)routes
 // 3) auth / home comps
 // 4) service
-//
+// 5) Routes in app config: withPreloading(PreloadAllModules)
 //
 // /
 // npm i @microsoft/signalr

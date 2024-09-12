@@ -1,12 +1,12 @@
 import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SignalrService } from './services/signalr.service';
-import { CommonModule } from '@angular/common';
+import { GeneralModule } from './modules/general.model';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, CommonModule],
+  imports: [RouterOutlet, GeneralModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
@@ -17,7 +17,6 @@ export class AppComponent implements OnInit, OnDestroy{
   
   ngOnInit(): void {
     this.signalrService.startConnection();
-
   }
   
   ngOnDestroy(): void {

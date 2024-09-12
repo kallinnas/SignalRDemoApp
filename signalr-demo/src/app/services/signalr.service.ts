@@ -2,15 +2,19 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as signalR from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
+import { Subject } from 'rxjs';
+import { PersonAuthDto, PersonRespDto } from '../models/person.model';
 
 @Injectable({ providedIn: 'root' })
 export class SignalrService {
 
   hubConnection!: signalR.HubConnection;
   personName!: string;
+  private signalrSubject = new Subject<any>();
+  signalrSubject$ = this.signalrSubject.asObservable();
 
   constructor(
-    private toastr: ToastrService,
+    public toastr: ToastrService,
     private router: Router
   ) { }
 
@@ -25,18 +29,16 @@ export class SignalrService {
 
     this.hubConnection.start()
       .then(() => {
-        console.log('#1 Hub conn started!');
-        this.authMeListenerSuccsess();
-        this.authMeListenerFail();
+        console.log('#0 Hub conn started!');
+        this.signalrSubject.next({ type: 'HubConnStarted' });
       })
       .catch(err => console.log('Error while srating conn: ' + err));
   }
 
   async authMe(username: string, password: string) {
     console.log('#3 authMe started!')
-    const personDto = { username: username, password: password };
 
-    await this.hubConnection.invoke('authMe', personDto)
+    await this.hubConnection.invoke('authMe', new PersonAuthDto(username, password))
       .then(() => console.log('#5 authMe than()'))
       .finally(() => this.toastr.info("Loading is attempt..."))
       .catch(err => console.log(err));
@@ -47,7 +49,7 @@ export class SignalrService {
   authMeListenerSuccsess() {
     console.log('#2 authMeListenerSuccsess started!')
 
-    this.hubConnection.on('authMeResponseSuccess', (response) => {
+    this.hubConnection.on('authorizationSuccess', (response: PersonRespDto) => {
       console.log('#4 authMeResponse listener()');
       this.personName = response.username;
       this.toastr.success('Login succsessfully!');

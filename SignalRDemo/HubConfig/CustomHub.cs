@@ -11,33 +11,47 @@ namespace SignalRDemo.HubConfig
 
         public CustomHub(AppDbContext context) { this.context = context; }
 
-        public async Task authMe(PersonDto personDto)
+        public async Task AuthMe(PersonAuthDto dto)
         {
             string signalrId = Context.ConnectionId;
             Person? person = await context.Person
-                .Where(p => p.Username == personDto.Username && p.Password == personDto.Password)
+                .Where(p => p.Username == dto.Username && p.Password == dto.Password)
                 .SingleOrDefaultAsync();
 
             if (person != null)
             {
-                Console.WriteLine("\n" + person.Name + " logged in" + "\nSignalrId: " + signalrId);
+                Connections connection = new Connections(person.Id, signalrId, DateTime.UtcNow);
 
-                Connections currentUser = new Connections
-                {
-                    PersonId = person.Id,
-                    SignalrId = signalrId,
-                    TimeStamp = DateTime.UtcNow
-                };
-
-                await context.Connections.AddAsync(currentUser);
+                await context.Connections.AddAsync(connection);
                 await context.SaveChangesAsync();
 
-                await Clients.Caller.SendAsync("authMeResponseSuccess", new PersonDto(person.Name, person.Password));
+                await Clients.Caller.SendAsync("authorizationSuccess", new PersonRespDto(person.Id, person.Name, person.Username));
             }
 
             else
             {
-                await Clients.Caller.SendAsync("authMeResponseFail", signalrId);
+                await Clients.Caller.SendAsync("authorizationFail", signalrId);
+            }
+        }
+
+        public async Task ReAuthMe(int personId)
+        {
+            string signalrId = Context.ConnectionId;
+            Person? person = await context.Person.Where(p => p.Id == personId).SingleOrDefaultAsync();
+
+            if (person != null)
+            {
+                Connections connection = new Connections(person.Id, signalrId, DateTime.UtcNow);
+
+                await context.Connections.AddAsync(connection);
+                await context.SaveChangesAsync();
+
+                await Clients.Caller.SendAsync("authorizationSuccess", new { person.Id, person.Name });
+            }
+
+            else
+            {
+                await Clients.Caller.SendAsync("authorizationFail", signalrId);
             }
         }
     }
