@@ -14,8 +14,7 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(private signalrService: SignalrService) { }
 
   ngOnInit(): void {
-    this.authMeListenerSuccess();
-    this.authMeListenerFail();
+    this.signalrService.startConnection();
   }
 
   ngOnDestroy(): void {
@@ -31,14 +30,5 @@ export class AuthComponent implements OnInit, OnDestroy {
     this.signalrService.authMe(form.value.username, form.value.password);
     form.reset();
   }
-
-  authMeListenerFail() {
-    this.signalrService.authMeListenerFail();
-  }
-
-  authMeListenerSuccess() {
-    this.signalrService.authMeListenerSuccsess();
-  }
-
 
 }

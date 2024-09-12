@@ -49,8 +49,7 @@ export class SignalrService {
 
     this.hubConnection.on('authMeResponseSuccess', (response) => {
       console.log('#4 authMeResponse listener()');
-      console.log(response);
-      this.personName = response.name;
+      this.personName = response.username;
       this.toastr.success('Login succsessfully!');
       this.router.navigate(["/home"]);
     });
