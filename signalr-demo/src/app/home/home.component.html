@@ -1,1 +1,6 @@
-<div>{{signalrService.personName}}</div>
+<div>Welcome, {{signalrService.personData.name}}</div>
+<div style="cursor: pointer;" (click)="logout()">Logout</div>
+
+<ul *ngFor="let person of persons">
+    <li>{{person.name}}</li>
+</ul>

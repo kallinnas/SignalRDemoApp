@@ -9,12 +9,15 @@ public class Person
     public virtual ICollection<Connections> Connections { get; set; } = new List<Connections>();
 }
 
-public class PersonRespDto : PersonDto
+public class PersonSignalrDto : PersonDto
 {
     public int Id { get; set; }
     public string Name { get; set; } = null!;
-
-    public PersonRespDto(int id, string name, string username) { Id = id; Name = name; Username = username; }
+    public string SignalrConnectionId { get; set; }
+    public PersonSignalrDto(int id, string name, string signalrConnectionId)
+    {
+        Id = id; Name = name; SignalrConnectionId = signalrConnectionId;
+    }
 }
 
 public class PersonAuthDto : PersonDto

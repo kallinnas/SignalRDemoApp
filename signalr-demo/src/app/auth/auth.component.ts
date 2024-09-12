@@ -20,8 +20,8 @@ export class AuthComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     console.log('#3 AuthComp_ngOnInit After Wait connection to start');
-    this.authService.authMeListenerSuccess();
-    this.authService.authMeListenerFail();
+    this.authService.authorizeListenerSuccess();
+    this.authService.authorizeListenerFail();
   }
 
   ngOnDestroy(): void {

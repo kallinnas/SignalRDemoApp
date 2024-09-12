@@ -12,8 +12,8 @@ export class PersonAuthDto {
     constructor(username: string, password: string) { this.username = username; this.password = password }
 }
 
-export class PersonRespDto{
-    id!: number;
+export class PersonSignalrDto {
+    id!: string;
     name!: string;
-    username!: string;
+    signalrConnectionId!: string;
 }

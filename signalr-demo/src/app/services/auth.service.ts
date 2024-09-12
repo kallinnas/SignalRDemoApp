@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { SignalrService } from './signalr.service';
 import { HubConnectionState } from '@microsoft/signalr';
-import { PersonRespDto } from '../models/person.model';
+import { PersonSignalrDto } from '../models/person.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -46,23 +46,25 @@ export class AuthService {
       .catch(err => console.log(err));
   }
 
-  authMeListenerSuccess() {
-    console.log('#4 authMeListenerSuccess')
+  authorizeListenerSuccess() {
+    console.log('#4 authorizeListenerSuccess')
 
-    this.signalrService.hubConnection.on('authorizationSuccess', (response: PersonRespDto) => {
+    this.signalrService.hubConnection.on('authorizationSuccess', (person: PersonSignalrDto) => {
       const step = localStorage.getItem('personId') ? 8 : 2;
-      console.log(`#${step} authMeListenerSuccess => setLocalStorage`);
-      localStorage.setItem('personId', response.id.toString());
-      this.signalrService.personName = response.name;
+      console.log(`#${step} authorizeListenerSuccess => setLocalStorage`);
+
+      this.signalrService.personData = { ...person };
+      localStorage.setItem('personId', person.id.toString());
+
       this.isAuthenticated = true;
       this.signalrService.toastr.success('Login succsessfully!');
       this.router.navigate(["/home"]);
     });
   }
 
-  authMeListenerFail() {
-    console.log('#5 authMeListenerFail');
-    this.signalrService.hubConnection.on("authMeListenerFail", () => this.signalrService.toastr.error("Wrong credentials!"));
+  authorizeListenerFail() {
+    console.log('#5 authorizeListenerFail');
+    this.signalrService.hubConnection.on("authorizeListenerFail", () => this.signalrService.toastr.error("Wrong credentials!"));
   }
 
   async reAuthorize(personId: number) {
@@ -77,9 +79,10 @@ export class AuthService {
 
   reAuthorizeListener() {
     console.log('#6 reAuthListener');
-    this.signalrService.hubConnection.on('authorizationSuccess', (response: PersonRespDto) => {
+    this.signalrService.hubConnection.on('authorizationSuccess', (person: PersonSignalrDto) => {
       console.log('#9 reAuthListener => response');
-      this.signalrService.personName = response.name;
+
+      this.signalrService.personData = { ...person };
       this.isAuthenticated = true;
       this.signalrService.toastr.success('Re-authentificated!');
       if (this.router.url == "/auth")
