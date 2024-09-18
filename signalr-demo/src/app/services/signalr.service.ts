@@ -4,24 +4,20 @@ import * as signalR from '@microsoft/signalr';
 import { ToastrService } from 'ngx-toastr';
 import { Subject } from 'rxjs';
 import { PersonSignalrDto } from '../models/person.model';
+import { environment } from '../../environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
 export class SignalrService {
 
   hubConnection!: signalR.HubConnection;
-  personData!: PersonSignalrDto;
+  
   private signalrSubject = new Subject<any>();
   signalrSubject$ = this.signalrSubject.asObservable();
 
-  constructor(
-    public toastr: ToastrService,
-    private router: Router
-  ) { }
-
   startConnection = () => {
     this.hubConnection = new signalR.HubConnectionBuilder()
-      .withUrl('https://localhost:7217/customHub', {
+      .withUrl(environment.hubURL, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
         // , accessTokenFactory: () => localStorage.getItem('token')
@@ -35,30 +31,6 @@ export class SignalrService {
       })
       .catch(err => console.log('Error while srating conn: ' + err));
   }
-
-  // async authMe(username: string, password: string) {
-  //   console.log('#3 authMe started!')
-
-  //   await this.hubConnection.invoke('authMe', new PersonAuthDto(username, password))
-  //     .then(() => console.log('#5 authMe than()'))
-  //     .finally(() => this.toastr.info("Loading is attempt..."))
-  //     .catch(err => console.log(err));
-
-  //   console.log('#6 Final async promt');
-  // }
-
-  // authMeListenerSuccsess() {
-  //   console.log('#2 authMeListenerSuccsess started!')
-
-  //   this.hubConnection.on('authorizationSuccess', (response: PersonRespDto) => {
-  //     console.log('#4 authMeResponse listener()');
-  //     this.personName = response.username;
-  //     this.toastr.success('Login succsessfully!');
-  //     this.router.navigate(["/home"]);
-  //   });
-  // }
-
-  // authorizeListenerFail() { this.hubConnection.on("authorizeListenerFail", () => this.toastr.error("Wrong credentials!")); }
 
   offConnection(text: string) { this.hubConnection.off(text); }
 

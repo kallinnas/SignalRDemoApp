@@ -3,33 +3,39 @@ import { Router } from '@angular/router';
 import { SignalrService } from './signalr.service';
 import { HubConnectionState } from '@microsoft/signalr';
 import { PersonSignalrDto } from '../models/person.model';
+import { ToastrService } from 'ngx-toastr';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+
   isAuthenticated: boolean = false;
+  personData!: PersonSignalrDto;
 
   constructor(
     private signalrService: SignalrService,
+    public toastr: ToastrService,
     public router: Router
   ) {
-    const id = localStorage.getItem('personId');
-    if (id) {
-      console.log('#1 constructor Has token');
+    if (typeof window !== 'undefined') {
+      const id = localStorage.getItem('personId');
+      if (id) {
+        console.log('#1 constructor Has token');
 
-      if (signalrService.hubConnection.state === HubConnectionState.Connected) {
-        console.log('#2 constructor Connection exists');
-        this.reAuthorizeListener();
-        this.reAuthorize(+id);
-      }
+        if (signalrService.hubConnection.state === HubConnectionState.Connected) {
+          console.log('#2 constructor Connection exists');
+          this.reAuthorizeListener();
+          this.reAuthorize(+id);
+        }
 
-      else {
-        console.log('#2 constructor Wait connection to start');
-        signalrService.signalrSubject$.subscribe(response => {
-          if (response.type == "HubConnStarted") {
-            this.reAuthorizeListener();
-            this.reAuthorize(+id);
-          }
-        });
+        else {
+          console.log('#2 constructor Wait connection to start');
+          signalrService.signalrSubject$.subscribe(response => {
+            if (response.type == "HubConnStarted") {
+              this.reAuthorizeListener();
+              this.reAuthorize(+id);
+            }
+          });
+        }
       }
     }
   }
@@ -41,7 +47,7 @@ export class AuthService {
     await this.signalrService.hubConnection.invoke('authMe', personDto)
       .then(() => {
         console.log('#3 authMe After Listener');
-        this.signalrService.toastr.info("Loading is attempt...")
+        this.toastr.info("Loading is attempt...")
       })
       .catch(err => console.log(err));
   }
@@ -53,18 +59,18 @@ export class AuthService {
       const step = localStorage.getItem('personId') ? 8 : 2;
       console.log(`#${step} authorizeListenerSuccess => setLocalStorage`);
 
-      this.signalrService.personData = { ...person };
+      this.personData = { ...person };
       localStorage.setItem('personId', person.id.toString());
 
       this.isAuthenticated = true;
-      this.signalrService.toastr.success('Login succsessfully!');
+      this.toastr.success('Login succsessfully!');
       this.router.navigate(["/home"]);
     });
   }
 
   authorizeListenerFail() {
     console.log('#5 authorizeListenerFail');
-    this.signalrService.hubConnection.on("authorizeListenerFail", () => this.signalrService.toastr.error("Wrong credentials!"));
+    this.signalrService.hubConnection.on("authorizeListenerFail", () => this.toastr.error("Wrong credentials!"));
   }
 
   async reAuthorize(personId: number) {
@@ -72,7 +78,7 @@ export class AuthService {
     await this.signalrService.hubConnection.invoke('ReAuthMe', personId)
       .then(() => {
         console.log('#10 reAuth then()');
-        this.signalrService.toastr.info("Loading is attempt...");
+        this.toastr.info("Loading is attempt...");
       })
       .catch(err => console.log(err));
   }
@@ -82,9 +88,9 @@ export class AuthService {
     this.signalrService.hubConnection.on('authorizationSuccess', (person: PersonSignalrDto) => {
       console.log('#9 reAuthListener => response');
 
-      this.signalrService.personData = { ...person };
+      this.personData = { ...person };
       this.isAuthenticated = true;
-      this.signalrService.toastr.success('Re-authentificated!');
+      this.toastr.success('Re-authentificated!');
       if (this.router.url == "/auth")
         this.router.navigate(["/home"]);
     });

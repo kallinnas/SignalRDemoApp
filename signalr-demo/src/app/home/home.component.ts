@@ -1,8 +1,9 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SignalrService } from '../services/signalr.service';
 import { GeneralModule } from '../modules/general.model';
 import { PersonSignalrDto } from '../models/person.model';
 import { HubConnectionState } from '@microsoft/signalr';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,10 @@ export class HomeComponent implements OnInit {
 
   persons = new Array<PersonSignalrDto>();
 
-  signalrService = inject(SignalrService);
+  constructor(
+    private signalrService: SignalrService,
+    public authService: AuthService
+  ) { }
 
   ngOnInit(): void {
     this.personOnList();
@@ -37,7 +41,7 @@ export class HomeComponent implements OnInit {
   }
 
   logout() {
-    this.signalrService.hubConnection.invoke('Logout', this.signalrService.personData.id).catch(err => console.log(err));
+    this.signalrService.hubConnection.invoke('Logout', this.authService.personData.id).catch(err => console.log(err));
   }
 
   logOutList(): void {

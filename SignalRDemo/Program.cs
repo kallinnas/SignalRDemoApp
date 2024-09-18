@@ -47,7 +47,7 @@ app.UseCors("AllowAllHeaders");
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<CustomHub>("/customHub");
+    endpoints.MapHub<CustomHub>("/ConnectionHub");
 });
 
 app.Run();
