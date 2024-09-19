@@ -1,30 +1,34 @@
 using Microsoft.EntityFrameworkCore;
 using SignalRDemo.Data;
 using SignalRDemo.HubConfig;
+using SignalRDemo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
 builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
 { builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(); }));
+
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
+
 // Configure DbContext with MySQL
 var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
+
 // JsonSerializerOptions to handle object cycles
-builder.Services.AddControllers().AddJsonOptions(options =>
-        {
-            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
-            options.JsonSerializerOptions.MaxDepth = 128;
-        });
+//builder.Services.AddControllers().AddJsonOptions(options =>
+//        {
+//            options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.Preserve;
+//            options.JsonSerializerOptions.MaxDepth = 128;
+//        });
 
 // Default container services.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-
+builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
@@ -47,7 +51,7 @@ app.UseCors("AllowAllHeaders");
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapHub<CustomHub>("/ConnectionHub");
+    endpoints.MapHub<ConnectionHub>("/ConnectionHub");
 });
 
 app.Run();

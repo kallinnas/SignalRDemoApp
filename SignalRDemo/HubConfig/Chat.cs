@@ -4,25 +4,19 @@ using SignalRDemo.Models;
 
 namespace SignalRDemo.HubConfig;
 
-public partial class CustomHub
+public partial class ConnectionHub
 {
-    public async Task getOnlinePersons()
+    public async Task GetOnlineUsers()
     {
-        var personId = context.Connections
-            .Where(c => c.SignalrId == Context.ConnectionId)
-            .Select(c => c.PersonId)
-            .SingleOrDefault();
+        var userId = await GetUserId();
 
-        if (personId != 0)
-        {
-            var onlinePersons = await context.Connections
-                .Where(c => c.PersonId != personId)
-                .Select(c => new PersonSignalrDto(c.PersonId,
-                    context.Person.Where(p => p.Id == c.PersonId)
-                    .Select(p => p.Name ?? "Unknown").SingleOrDefault() ?? "Unknown", c.SignalrId))
-                .ToListAsync();
+        var onlineUsers = await context.Connections
+            .Where(c => c.UserId != userId)
+            .Select(c => new UserSignalrDto(c.UserId,
+                context.Users.Where(p => p.Id == c.UserId)
+                .Select(p => p.Name ?? "Unknown").SingleOrDefault() ?? "Unknown", c.SignalrId))
+            .ToListAsync();
 
-            await Clients.Caller.SendAsync("getOnlinePersonsResponse", onlinePersons);
-        }
+        await Clients.Caller.SendAsync("GetOnlineUsers_Response", onlineUsers);
     }
 }
