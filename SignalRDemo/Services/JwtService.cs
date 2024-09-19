@@ -1,5 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using SignalRDemo.Models;
+using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -71,6 +72,62 @@ public class JwtService
         {
             return false;
         }
+    }
+
+    public ClaimsPrincipal? GetUserFromToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+
+        try
+        {
+            var validationParameters = new TokenValidationParameters
+            {
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidateLifetime = true,
+                ValidateIssuerSigningKey = true,
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                ValidAudience = _configuration["Jwt:Audience"],
+                IssuerSigningKey = new SymmetricSecurityKey(key),
+                ClockSkew = TimeSpan.Zero
+            };
+
+            // Validate the token and extract the claims
+            SecurityToken validatedToken;
+            var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+
+            // Return the ClaimsPrincipal which contains the user information
+            return principal;
+        }
+        catch (Exception)
+        {
+            return null; // Token is invalid or some error occurred
+        }
+    }
+
+    public User? GetUserInfoFromToken(string token)
+    {
+        var principal = GetUserFromToken(token);
+
+        if (principal != null)
+        {
+            var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var emailClaim = principal.FindFirst(ClaimTypes.Email)?.Value;
+            var roleClaim = principal.FindFirst(ClaimTypes.Role)?.Value;
+
+            if (userIdClaim != null && emailClaim != null && roleClaim != null)
+            {
+                return new User
+                {
+                    Id = Guid.Parse(userIdClaim),
+                    Email = emailClaim,
+                    Role = sbyte.Parse(roleClaim)
+                };
+            }
+        }
+
+        return null; // Invalid token or user info missing
     }
 }
 

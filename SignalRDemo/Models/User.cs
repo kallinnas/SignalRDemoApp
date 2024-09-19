@@ -31,13 +31,13 @@ public class UserSignalrDto
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
     public string SignalrId { get; set; }
-    public TokenRequest Token { get; set; }
+    public string Token { get; set; }
     public UserSignalrDto() { }
     public UserSignalrDto(Guid id, string name, string signalrId)
     {
         Id = id; Name = name; SignalrId = signalrId;
     }
-    public UserSignalrDto(Guid id, string name, string signalrId, TokenRequest token)
+    public UserSignalrDto(Guid id, string name, string signalrId, string token)
     {
         Id = id; Name = name; SignalrId = signalrId; Token = token;
     }

@@ -49,7 +49,7 @@ public partial class ConnectionHub : Hub
                 await Clients.Caller.SendAsync("Authentification_Fail", Context.ConnectionId);
             }
 
-            else await Login(user, "Authentification_ResponseSuccess");
+            else await Login(user, "Authentification_Success");
         }
 
         catch (Exception ex)
@@ -58,18 +58,18 @@ public partial class ConnectionHub : Hub
         }
     }
 
-    public async Task ReAuthentification(Guid userId)
+    public async Task ValidationToken(string token)
     {
         try
         {
-            var person = await context.Users.SingleOrDefaultAsync(u => u.Id == userId);
+            var isValid = _jwtService.ValidateToken(token);
 
-            if (person == null)
+            if (!isValid)
             {
-                await Clients.Caller.SendAsync("Authentification_Fail", Context.ConnectionId);
+                await Clients.Caller.SendAsync("ValidationToken_Fail", Context.ConnectionId);
             }
 
-            else await Login(person, "ReAuthentification_ResponseSuccess");
+            else await Login(_jwtService.GetUserInfoFromToken(token), "ValidationToken_Success");
         }
 
         catch (Exception ex)
@@ -117,7 +117,7 @@ public partial class ConnectionHub : Hub
             await context.Connections.AddAsync(connection);
             await context.SaveChangesAsync();
 
-            var userDto = new UserSignalrDto(user.Id, user.Name, signalrId, new TokenRequest(_jwtService.GenerateJwtToken(user)));
+            var userDto = new UserSignalrDto(user.Id, user.Name, signalrId, _jwtService.GenerateJwtToken(user));
             await Clients.Caller.SendAsync(successMethod, userDto);
             await Clients.Others.SendAsync("User_Online", userDto);
         }

@@ -4,7 +4,7 @@ using SignalRDemo.Models;
 
 namespace SignalRDemo.HubConfig;
 
-public partial class ConnectionHub
+public partial class ConnectionHub : Hub
 {
     public async Task GetOnlineUsers()
     {
