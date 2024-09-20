@@ -1,8 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { SignalrService } from '../services/signalr.service';
-import { NgForm } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
 import { GeneralModule } from '../modules/general.model';
+import { UserAuthDto, UserRegistrDto } from '../models/user.model';
 
 @Component({
   selector: 'app-auth',
@@ -11,29 +12,46 @@ import { GeneralModule } from '../modules/general.model';
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss'
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent implements OnInit {
+
+  errorMessage = '';
+  isRegisterMode: boolean = false;
+  authForm!: FormGroup;
 
   constructor(
+    private fb: FormBuilder,
+    public authService: AuthService,
     private signalrService: SignalrService,
-    public authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    console.log('#3 AuthComp_ngOnInit After Wait connection to start');
-    this.authService.authorizeListenerSuccess();
-    this.authService.authorizeListenerFail();
+    this.initialForm();
   }
 
-  ngOnDestroy(): void {
-    this.signalrService.offConnection('authorizationSuccess');
-    this.signalrService.offConnection('authorizationFail');
+  initialForm() {
+    this.authForm = this.fb.group({
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
+      name: ['']
+    });
   }
 
-  onSubmit(form: NgForm) {
-    if (form.valid) {
-      this.authService.authMe(form.value.username, form.value.password);
-      form.reset();
-    } else return;
+  toggleMode() {
+    this.isRegisterMode = !this.isRegisterMode;
+  }
+
+  onSubmit() {
+    if (this.authForm.invalid) {
+      return;
+    }
+
+    if (this.isRegisterMode) {
+      this.authService.registrationAsync(new UserRegistrDto(this.authForm.value.email, this.authForm.value.password, this.authForm.value.name));
+    }
+
+    else {
+      this.authService.authentificationAsync(new UserAuthDto(this.authForm.value.email, this.authForm.value.password));
+    }
   }
 
 }

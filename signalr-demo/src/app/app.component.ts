@@ -1,7 +1,8 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { SignalrService } from './services/signalr.service';
 import { GeneralModule } from './modules/general.model';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -10,17 +11,17 @@ import { GeneralModule } from './modules/general.model';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
-export class AppComponent implements OnInit, OnDestroy{
+export class AppComponent implements OnInit {
   title = 'signalr-demo';
-  
-  signalrService = inject(SignalrService);
-  
+
+  constructor(
+    public signalrService: SignalrService,
+    private authService: AuthService,
+  ) { }
+
   ngOnInit(): void {
-    this.signalrService.startConnection();
+    this.authService.checkAuthentication();
   }
-  
-  ngOnDestroy(): void {
-    this.signalrService.offConnection("ngOnDestroy in app");
-  }
+
 
 }

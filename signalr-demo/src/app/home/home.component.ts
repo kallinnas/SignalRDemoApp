@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { SignalrService } from '../services/signalr.service';
 import { GeneralModule } from '../modules/general.model';
-import { PersonSignalrDto } from '../models/person.model';
 import { HubConnectionState } from '@microsoft/signalr';
 import { AuthService } from '../services/auth.service';
+import { UserSignalrDto } from '../models/user.model';
 
 @Component({
   selector: 'app-home',
@@ -14,7 +14,7 @@ import { AuthService } from '../services/auth.service';
 })
 export class HomeComponent implements OnInit {
 
-  persons = new Array<PersonSignalrDto>();
+  usersOnline = new Array<UserSignalrDto>();
 
   constructor(
     private signalrService: SignalrService,
@@ -22,56 +22,55 @@ export class HomeComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    this.personOnList();
-    this.personOffList();
-    this.logOutList();
-    this.getOnlinePersonsList();
+    this.userOnline();
+    this.userOffline();
+    this.getOnlineUsers();
 
     if (this.signalrService.hubConnection.state == HubConnectionState.Connected) {
-      this.getOnlinePersonsInv();
+      this.getOnlineUsersInv();
     }
 
     else {
       this.signalrService.signalrSubject$.subscribe((response: any) => {
-        if (response.type == "HubConnStarted") {
-          this.getOnlinePersonsInv();
+        if (response.type == "HubConnectionStarted") {
+          this.getOnlineUsersInv();
         }
       });
     }
   }
 
-  logout() {
-    this.signalrService.hubConnection.invoke('Logout', this.authService.personData.id).catch(err => console.log(err));
+  userOnline(): void {
+    try {
+      this.signalrService.hubConnection.on('User_Online', (user: UserSignalrDto) => {
+        this.usersOnline.push(user);
+      });
+    }
+
+    catch (err) {
+      console.log(err);
+    }
   }
 
-  logOutList(): void {
-    this.signalrService.hubConnection.on('logoutResponse', () => {
-      localStorage.removeItem('personId');
-      location.reload();
-      // this.signalrService.hubConnection.stop();
-    });
+  userOffline(): void {
+    try {
+      this.signalrService.hubConnection.on('User_Offline', (userId: string) => {
+        this.usersOnline = this.usersOnline.filter(u => u.id != userId);
+      });
+    }
+
+    catch (err) {
+      console.log(err);
+    }
   }
 
-  personOnList(): void {
-    this.signalrService.hubConnection.on('personOn', (person: PersonSignalrDto) => {
-      this.persons.push(person);
-    });
-  }
-
-  personOffList(): void {
-    this.signalrService.hubConnection.on('personOff', (personId: string) => {
-      this.persons = this.persons.filter(p => p.id != personId);
-    });
-  }
-
-  getOnlinePersonsInv(): void {
-    this.signalrService.hubConnection.invoke('getOnlinePersons')
+  getOnlineUsersInv(): void {
+    this.signalrService.hubConnection.invoke('GetOnlineUsers')
       .catch(err => console.error(err));
   }
 
-  getOnlinePersonsList(): void {
-    this.signalrService.hubConnection.on('getOnlinePersonsResponse', (onlinePersons: Array<PersonSignalrDto>) => {
-      this.persons = [...onlinePersons];
+  getOnlineUsers(): void {
+    this.signalrService.hubConnection.on('GetOnlineUsers_Response', (onlineUsers: Array<UserSignalrDto>) => {
+      this.usersOnline = [...onlineUsers];
     });
   }
 }

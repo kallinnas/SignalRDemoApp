@@ -23,6 +23,7 @@ public class JwtService
             {
                 new Claim(ClaimTypes.Email, user.Email),
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.Name.ToString()),
                 new Claim(ClaimTypes.Role, user.Role.ToString())
             }),
 
@@ -114,6 +115,7 @@ public class JwtService
         {
             var userIdClaim = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value;
             var emailClaim = principal.FindFirst(ClaimTypes.Email)?.Value;
+            var nameClaim = principal.FindFirst(ClaimTypes.Name)?.Value;
             var roleClaim = principal.FindFirst(ClaimTypes.Role)?.Value;
 
             if (userIdClaim != null && emailClaim != null && roleClaim != null)
@@ -122,6 +124,7 @@ public class JwtService
                 {
                     Id = Guid.Parse(userIdClaim),
                     Email = emailClaim,
+                    Name = nameClaim,
                     Role = sbyte.Parse(roleClaim)
                 };
             }

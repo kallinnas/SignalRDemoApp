@@ -1,6 +1,36 @@
-<div>Welcome, {{authService.personData.name}}</div>
-<div style="cursor: pointer;" (click)="logout()">Logout</div>
+<div fxLayout="column" fxFlexFill>
 
-<ul *ngFor="let person of persons">
-    <li>{{person.name}}</li>
-</ul>
+    <mat-toolbar color="primary" *ngIf="authService.userData">
+        <mat-toolbar-row>
+            <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex="100%" fxLayoutGap="20px">
+                <span>Welcome, {{ authService.userData.name }}</span>
+
+                <mat-card style="padding: 5px 10px;">
+                    <mat-card-content style="padding: 0;">
+                        <p>Connection ID: {{ authService.userData.signalrId }}</p>
+                    </mat-card-content>
+                </mat-card>
+
+            </div>
+        </mat-toolbar-row>
+    </mat-toolbar>
+
+    <mat-card style="margin-top: 26px;">
+        <mat-card-header>
+            <mat-card-title>Online Users</mat-card-title>
+        </mat-card-header>
+
+        <mat-divider></mat-divider>
+
+        <mat-card-content>
+            <mat-list *ngIf="usersOnline.length > 0">
+              <mat-list-item *ngFor="let user of usersOnline" style="font-size: 14px;">
+                <h3 matLine style="font-size: 16px; margin: 0;">{{user?.name}}, ID: {{user?.signalrId}}</h3>
+              </mat-list-item>
+            </mat-list>
+
+            <p *ngIf="usersOnline.length === 0">No users are currently online.</p>
+        </mat-card-content>
+    </mat-card>
+
+</div>

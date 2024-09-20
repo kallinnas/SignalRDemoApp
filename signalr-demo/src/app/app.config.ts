@@ -5,6 +5,7 @@ import { ToastrModule } from 'ngx-toastr';
 import { routes } from './app.routes';
 import { provideClientHydration } from '@angular/platform-browser';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -12,6 +13,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideClientHydration(),
     provideAnimationsAsync(),
+  //   provideHttpClient(withFetch()
+  //   // , withInterceptors([authInterceptor])
+  // ),
     importProvidersFrom(ToastrModule.forRoot({ enableHtml: true, timeOut: 10000, positionClass: 'toast-top-right', preventDuplicates: false })),
     importProvidersFrom(RouterModule)
   ]

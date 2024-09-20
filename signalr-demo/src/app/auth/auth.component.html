@@ -1,9 +1,41 @@
 <div fxLayout="column" fxLayoutAlign="center center" style="width: 300px; margin: auto;">
-    <form #form="ngForm" (ngSubmit)="onSubmit(form)">
+    <h2>{{ isRegisterMode ? 'Register' : 'Login' }}</h2>
 
-        <input ngModel type="username" id="username" name="username" placeholder="username">
-        <input ngModel type="password" id="password" name="password" placeholder="password">
+    <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
 
-        <button type="submit" [disabled]="!form.valid"> {{ 'Login' }} </button>
+        <div fxLayout="column">
+            <div fxLayout="column" fxLayoutAlign="center center">
+                <mat-form-field appearance="fill">
+                    <mat-label>Email</mat-label>
+                    <input matInput formControlName="email" placeholder="Email">
+                    <mat-error *ngIf="authForm.controls['email'].hasError('required')">Email is required.</mat-error>
+                    <mat-error *ngIf="authForm.controls['email'].hasError('email')">Invalid email format.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill">
+                    <mat-label>Password</mat-label>
+                    <input matInput formControlName="password" type="password" placeholder="Password">
+                    <mat-error *ngIf="authForm.controls['password'].hasError('required')">Password is
+                        required.</mat-error>
+                </mat-form-field>
+
+                <mat-form-field appearance="fill" *ngIf="isRegisterMode">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name" placeholder="Name">
+                    <mat-error *ngIf="authForm.controls['name'].hasError('required')">Name is required.</mat-error>
+                </mat-form-field>
+            </div>
+
+
+            <button mat-button type="button" (click)="toggleMode()">
+                {{ isRegisterMode ? 'Already have an account? Login' : 'Need an account? Register' }}
+            </button>
+
+            <button mat-raised-button color="primary" type="submit" [disabled]="authForm.invalid">
+                {{ isRegisterMode ? 'Register' : 'Login' }}
+            </button>
+        </div>
+
+        <div *ngIf="errorMessage" style="color: red;">{{ errorMessage }}</div>
     </form>
 </div>
