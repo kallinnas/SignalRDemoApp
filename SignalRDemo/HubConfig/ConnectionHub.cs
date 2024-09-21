@@ -46,10 +46,10 @@ public partial class ConnectionHub : Hub
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
-                await Clients.Caller.SendAsync("Authentification_Fail", Context.ConnectionId);
+                await Clients.Caller.SendAsync("Auth_Fail", Context.ConnectionId);
             }
 
-            else await Login(user, "Authentification_Success");
+            else await Login(user, "Auth_Success");
         }
 
         catch (Exception ex)
@@ -66,10 +66,13 @@ public partial class ConnectionHub : Hub
 
             if (!isValid)
             {
-                await Clients.Caller.SendAsync("ValidationToken_Fail", Context.ConnectionId);
+                await Clients.Caller.SendAsync("Valid_Token_Fail");
             }
 
-            else await Login(_jwtService.GetUserInfoFromToken(token), "ValidationToken_Success");
+            else
+            {
+                await Login(_jwtService.GetUserInfoFromToken(token), "Valid_Token_Success");
+            }
         }
 
         catch (Exception ex)
@@ -84,7 +87,7 @@ public partial class ConnectionHub : Hub
         {
             if (context.Users.Any(u => u.Email == dto.Email))
             {
-                await Clients.Caller.SendAsync("Registration_Fail", Context.ConnectionId);
+                await Clients.Caller.SendAsync("Register_Fail", Context.ConnectionId);
             }
 
             var newUser = new User
@@ -98,7 +101,7 @@ public partial class ConnectionHub : Hub
             context.Users.Add(newUser);
             context.SaveChanges();
 
-            await Login(newUser, "Registration_ResponseSuccess");
+            await Login(newUser, "Register_Success");
         }
 
         catch (Exception ex)

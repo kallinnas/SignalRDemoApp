@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import * as signalR from '@microsoft/signalr';
 import { Subject } from 'rxjs';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 
 @Injectable({ providedIn: 'root' })
@@ -32,6 +32,8 @@ export class SignalrService {
   }
 
   offConnection(text: string | string[]) {
+    console.log('#5 offConnection: ' + text);
+    
     (Array.isArray(text) ? text : [text]).forEach(t => this.hubConnection.off(t));
   }
 

@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
-import { SignalrService } from '../services/signalr.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { GeneralModule } from '../modules/general.model';
-import { HubConnectionState } from '@microsoft/signalr';
-import { AuthService } from '../services/auth.service';
 import { UserSignalrDto } from '../models/user.model';
+import { SignalrService } from '../services/signalr/signalr.service';
+import { AppService } from '../services/app.service';
+import { LogoutService } from '../services/signalr/logout.service';
 
 @Component({
   selector: 'app-home',
@@ -12,21 +12,26 @@ import { UserSignalrDto } from '../models/user.model';
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
 
   usersOnline = new Array<UserSignalrDto>();
 
   constructor(
     private signalrService: SignalrService,
-    public authService: AuthService
+    public logoutService: LogoutService,
+    public appService: AppService
   ) { }
+
+  ngOnDestroy(): void {
+    this.signalrService.offConnection(this.logoutService.successCommand);
+  }
 
   ngOnInit(): void {
     this.userOnline();
     this.userOffline();
     this.getOnlineUsers();
 
-    if (this.signalrService.hubConnection.state == HubConnectionState.Connected) {
+    if (this.signalrService.hasConnection()) {
       this.getOnlineUsersInv();
     }
 

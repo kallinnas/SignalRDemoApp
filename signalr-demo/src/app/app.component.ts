@@ -1,8 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { SignalrService } from './services/signalr.service';
 import { GeneralModule } from './modules/general.model';
-import { AuthService } from './services/auth.service';
+import { LoginService } from './services/signalr/login.service';
 
 @Component({
   selector: 'app-root',
@@ -14,14 +13,9 @@ import { AuthService } from './services/auth.service';
 export class AppComponent implements OnInit {
   title = 'signalr-demo';
 
-  constructor(
-    public signalrService: SignalrService,
-    private authService: AuthService,
-  ) { }
+  constructor(private loginService: LoginService) { }
 
   ngOnInit(): void {
-    this.authService.checkAuthentication();
+    this.loginService.checkAuthentication();
   }
-
-
 }

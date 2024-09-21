@@ -1,17 +1,18 @@
 <div fxLayout="column" fxFlexFill>
 
-    <mat-toolbar color="primary" *ngIf="authService.userData">
+    <mat-toolbar color="primary" *ngIf="appService.userData">
         <mat-toolbar-row>
-            <div fxLayout="row" fxLayoutAlign="space-between center" fxFlex="100%" fxLayoutGap="20px">
-                <span>Welcome, {{ authService.userData.name }}</span>
+            <mat-card fxLayout="row" fxLayoutAlign="space-around center" fxFlex="100%" fxLayoutGap="20px">
+                <div>Welcome, {{ appService.userData.name }}</div>
 
-                <mat-card style="padding: 5px 10px;">
-                    <mat-card-content style="padding: 0;">
-                        <p>Connection ID: {{ authService.userData.signalrId }}</p>
-                    </mat-card-content>
-                </mat-card>
+                <div>
+                    Connection ID: {{ appService.userData.signalrId }}
+                </div>
 
-            </div>
+
+                <button style="cursor: pointer;" (click)="logoutService.logout()"> Logout </button>
+
+            </mat-card>
         </mat-toolbar-row>
     </mat-toolbar>
 
@@ -24,9 +25,9 @@
 
         <mat-card-content>
             <mat-list *ngIf="usersOnline.length > 0">
-              <mat-list-item *ngFor="let user of usersOnline" style="font-size: 14px;">
-                <h3 matLine style="font-size: 16px; margin: 0;">{{user?.name}}, ID: {{user?.signalrId}}</h3>
-              </mat-list-item>
+                <mat-list-item *ngFor="let user of usersOnline" style="font-size: 14px;">
+                    <h3 matLine style="font-size: 16px; margin: 0;">{{user?.name}}, ID: {{user?.signalrId}}</h3>
+                </mat-list-item>
             </mat-list>
 
             <p *ngIf="usersOnline.length === 0">No users are currently online.</p>

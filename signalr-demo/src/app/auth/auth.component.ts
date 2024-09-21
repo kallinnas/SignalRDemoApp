@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { SignalrService } from '../services/signalr.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { AuthService } from '../services/auth.service';
 import { GeneralModule } from '../modules/general.model';
 import { UserAuthDto, UserRegistrDto } from '../models/user.model';
+import { AuthService } from '../services/signalr/auth.service';
+import { RegisterService } from '../services/signalr/register.service';
+import { SignalrService } from '../services/signalr/signalr.service';
+import { ValidationTokenService } from '../services/signalr/validation-token.service';
 
 @Component({
   selector: 'app-auth',
@@ -12,7 +14,7 @@ import { UserAuthDto, UserRegistrDto } from '../models/user.model';
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss'
 })
-export class AuthComponent implements OnInit {
+export class AuthComponent implements OnInit, OnDestroy {
 
   errorMessage = '';
   isRegisterMode: boolean = false;
@@ -22,7 +24,22 @@ export class AuthComponent implements OnInit {
     private fb: FormBuilder,
     public authService: AuthService,
     private signalrService: SignalrService,
+    private registerService: RegisterService,
+    private validationTokenService: ValidationTokenService,
   ) { }
+
+  ngOnDestroy(): void {
+    if (this.signalrService.hasConnection()) {
+      this.signalrService.offConnection([
+        this.validationTokenService.successCommand,
+        this.validationTokenService.failCommand,
+        this.authService.successCommand,
+        this.authService.failCommand,
+        this.registerService.successCommand,
+        this.registerService.failCommand,
+      ]);
+    }
+  }
 
   ngOnInit(): void {
     this.initialForm();
@@ -46,11 +63,11 @@ export class AuthComponent implements OnInit {
     }
 
     if (this.isRegisterMode) {
-      this.authService.registrationAsync(new UserRegistrDto(this.authForm.value.email, this.authForm.value.password, this.authForm.value.name));
+      this.registerService.launchRegistration(new UserRegistrDto(this.authForm.value.email, this.authForm.value.password, this.authForm.value.name));
     }
 
     else {
-      this.authService.authentificationAsync(new UserAuthDto(this.authForm.value.email, this.authForm.value.password));
+      this.authService.launchAuthentification(new UserAuthDto(this.authForm.value.email, this.authForm.value.password));
     }
   }
 
