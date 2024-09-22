@@ -4,11 +4,12 @@ import { UserSignalrDto } from '../models/user.model';
 import { SignalrService } from '../services/signalr/signalr.service';
 import { AppService } from '../services/app.service';
 import { LogoutService } from '../services/signalr/logout.service';
+import { GameManagerComponent } from '../games/game-manager/game-manager.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [GeneralModule],
+  imports: [GeneralModule, GameManagerComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss'
 })

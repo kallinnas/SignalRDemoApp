@@ -6,8 +6,9 @@ using SignalRDemo.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
-{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+//builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
+//{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
@@ -38,13 +39,14 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 
-app.UseCors("AllowAllHeaders");
+app.UseCors("CorsPolicy");
 
 // SIGNAL_R
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
     endpoints.MapHub<ConnectionHub>("/ConnectionHub");
+    endpoints.MapHub<RspGameHub>("/RspGameHub");
 });
 
 app.Run();
@@ -75,4 +77,7 @@ app.Run();
 // /
 // npm i @microsoft/signalr
 // 
+// for game install on UI: npm install ngx-signalr-websocket --save
+//
+//
 // ?

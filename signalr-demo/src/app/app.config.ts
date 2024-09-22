@@ -13,9 +13,9 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withPreloading(PreloadAllModules)),
     provideClientHydration(),
     provideAnimationsAsync(),
-  //   provideHttpClient(withFetch()
+    provideHttpClient(withFetch()
   //   // , withInterceptors([authInterceptor])
-  // ),
+  ),
     importProvidersFrom(ToastrModule.forRoot({ enableHtml: true, timeOut: 10000, positionClass: 'toast-top-right', preventDuplicates: false })),
     importProvidersFrom(RouterModule)
   ]
