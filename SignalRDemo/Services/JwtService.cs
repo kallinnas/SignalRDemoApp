@@ -94,16 +94,14 @@ public class JwtService
                 ClockSkew = TimeSpan.Zero
             };
 
-            // Validate the token and extract the claims
             SecurityToken validatedToken;
             var principal = tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
 
-            // Return the ClaimsPrincipal which contains the user information
             return principal;
         }
         catch (Exception)
         {
-            return null; // Token is invalid or some error occurred
+            return null;
         }
     }
 
@@ -130,7 +128,7 @@ public class JwtService
             }
         }
 
-        return null; // Invalid token or user info missing
+        return null;
     }
 }
 

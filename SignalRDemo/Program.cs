@@ -6,8 +6,6 @@ using SignalRDemo.Services;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-//builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
-//{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
 builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
 
 // SIGNAL_R
@@ -41,7 +39,6 @@ app.UseAuthorization();
 
 app.UseCors("CorsPolicy");
 
-// SIGNAL_R
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
