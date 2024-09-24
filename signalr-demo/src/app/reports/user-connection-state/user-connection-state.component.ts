@@ -1,19 +1,19 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { GeneralModule } from '../modules/general.model';
-import { UserSignalrDto } from '../models/user.model';
-import { SignalrService } from '../services/signalr/signalr.service';
-import { AppService } from '../services/app.service';
-import { LogoutService } from '../services/signalr/logout.service';
-import { GameManagerComponent } from '../games/game-manager/game-manager.component';
+import { Component } from '@angular/core';
+import { UserSignalrDto } from '../../models/user.model';
+import { AppService } from '../../services/app.service';
+import { LogoutService } from '../../services/signalr/logout.service';
+import { SignalrService } from '../../services/signalr/signalr.service';
+import { GeneralModule } from '../../modules/general.model';
+import { GameManagerComponent } from "../../games/game-manager/game-manager.component";
 
 @Component({
-  selector: 'app-home',
+  selector: 'app-user-connection-state',
   standalone: true,
-  imports: [GeneralModule, GameManagerComponent],
-  templateUrl: './home.component.html',
-  styleUrl: './home.component.scss'
+  imports: [GeneralModule, GameManagerComponent, GameManagerComponent],
+  templateUrl: './user-connection-state.component.html',
+  styleUrl: './user-connection-state.component.scss'
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class UserConnectionStateComponent {
 
   usersOnline = new Array<UserSignalrDto>();
 

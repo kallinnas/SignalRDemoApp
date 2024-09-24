@@ -46,7 +46,10 @@ export class AuthService {
         this.appService.isAuthenticated = true;
 
         this.appService.toastr.success('Login succsessfully!');
-        this.appService.router.navigate(["/home"]);
+
+        if (this.appService.getUserRole() == '1') {
+          this.appService.router.navigate(["user-connection-state"]);
+        } else this.appService.router.navigate(["game-manager"]);
       });
     }
 

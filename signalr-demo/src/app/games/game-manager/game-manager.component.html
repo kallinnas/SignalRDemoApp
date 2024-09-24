@@ -1,8 +1,11 @@
 <div fxFlexAlign="center">
     <div *ngIf="(status$ | async) as playStatus; else not_connected" [ngSwitch]="playStatus.status">
-        <app-rsp-welcome *ngSwitchCase="'connected'"></app-rsp-welcome>
-        <div *ngSwitchCase="'waiting'"><p>Waiting for another player to connect ...</p></div>
+        <div *ngSwitchCase="'waiting'">
+            <p>Waiting for another player to connect ...</p>
+        </div>
         <app-rsp-game *ngSwitchCase="'playing'" [game]="playStatus"></app-rsp-game>
     </div>
-    <ng-template #not_connected>Waiting for server connection ...</ng-template>
- </div>
+    <ng-template #not_connected>
+        <p>Waiting for server connection ...</p>
+    </ng-template>
+</div>

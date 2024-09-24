@@ -1,3 +1,26 @@
-<h2>SignalR Demo</h2>
+<div fxFlexFill fxLayout="column">
 
-<router-outlet></router-outlet>
+    <div *ngIf="appService.isAuthenticated" fxFlex="80px" fxLayoutAlign="space-around center">
+        <div fxFlex fxLayoutAlign="space-evenly center">
+            <a *ngIf="appService.getUserRole() == '1'" routerLink="/user-connection-state" class="router-link">User Connection State</a>
+            <a routerLink="/game-manager" class="router-link">Rock-Scissors-Paper</a>
+        </div>
+
+        <div fxFlex="100px" fxLayoutAlign="center">
+            <a style="cursor: pointer;" (click)="logoutService.logout()"> Logout </a>
+        </div>
+    </div>
+
+    <div fxFlex="100%" fxLayout="column" style="overflow: auto;">
+        <div fxFlex style="margin: 1%;">
+            <router-outlet></router-outlet>
+        </div>
+    </div>
+
+    <footer fxLayout="column">
+        <div fxLayout="row">
+            <hr fxFlex="90">
+        </div>
+        <p fxFlexAlign="center">Copyright © 2024 SignalR Game System</p>
+    </footer>
+</div>

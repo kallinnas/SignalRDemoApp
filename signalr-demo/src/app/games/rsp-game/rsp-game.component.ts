@@ -19,13 +19,14 @@ interface Output {
 export class RspGameComponent {
 
   @Input() game!: GameStatus;
-  output$: Observable<Output>; 
+  output$: Observable<Output>;
 
   opponent? = '';
   currentThrow = '';
 
-  constructor(private hub: RspGameService) { 
-
+  constructor(
+    private hub: RspGameService
+  ) {
     this.output$ = this.hub.outcome$!.pipe(
       map(outcome => {
         switch (outcome.type) {
@@ -37,7 +38,6 @@ export class RspGameComponent {
       })
     );
   }
-
 
   ngOnInit(): void {
     this.opponent = this.game.player1 === this.game.thisPlayer ? this.game.player2 : this.game.player1;

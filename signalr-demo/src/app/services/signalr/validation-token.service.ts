@@ -49,7 +49,7 @@ export class ValidationTokenService {
         this.appService.isAuthenticated = true;
         
         this.appService.toastr.success('Re-authentificated!');
-        this.appService.router.navigate(["/home"]);
+        this.appService.router.navigate(["user-connection-state"]);
       });
     }
 

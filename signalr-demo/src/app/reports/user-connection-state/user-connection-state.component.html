@@ -4,14 +4,7 @@
         <mat-toolbar-row>
             <mat-card fxLayout="row" fxLayoutAlign="space-around center" fxFlex="100%" fxLayoutGap="20px">
                 <div>Welcome, {{ appService.userData.name }}</div>
-
-                <div>
-                    Connection ID: {{ appService.userData.signalrId }}
-                </div>
-
-
-                <button style="cursor: pointer;" (click)="logoutService.logout()"> Logout </button>
-
+                <div> Connection ID: {{ appService.userData.signalrId }} </div>
             </mat-card>
         </mat-toolbar-row>
     </mat-toolbar>
@@ -33,6 +26,4 @@
             <p *ngIf="usersOnline.length === 0">No users are currently online.</p>
         </mat-card-content>
     </mat-card>
-
 </div>
-<app-game-manager></app-game-manager>

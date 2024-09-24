@@ -2,11 +2,13 @@ import { Injectable } from '@angular/core';
 
 import { ValidationTokenService } from './validation-token.service';
 import { SignalrService } from './signalr.service';
+import { AppService } from '../app.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
 
   constructor(
+    private appService: AppService,
     private signalrService: SignalrService,
     private validationTokenService: ValidationTokenService,
   ) { }
@@ -21,7 +23,7 @@ export class LoginService {
     try {
       this.signalrService.startConnection()
         .then(() => {
-          const token = localStorage.getItem('token');
+          const token = this.appService.getToken();
 
           if (this.signalrService.hasConnection()) {
             if (token) {
@@ -38,4 +40,5 @@ export class LoginService {
 
     catch (err) { console.log(err); }
   }
+  
 }

@@ -45,7 +45,7 @@ export class RegisterService {
       this.appService.isAuthenticated = true;
 
       this.appService.toastr.success('Registrated successfully!');
-      this.appService.router.navigate(["/home"]);
+      this.appService.router.navigate(["user-connection-state"]);
     });
   }
 
