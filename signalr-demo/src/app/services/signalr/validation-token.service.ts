@@ -27,10 +27,9 @@ export class ValidationTokenService {
     try {
       console.log('#3 validationToken');
 
-      await this.signalrService.hubConnection.invoke(this.methodName, localStorage.getItem('token'))
+      await this.signalrService.hubConnection.invoke(this.methodName, this.appService.getToken())
         .then(() => {
           console.log('#6 after validationToken: then()');
-          this.logoutService.logoutListenResponse();
         })
         .catch(err => console.log(err));
     }
@@ -46,10 +45,10 @@ export class ValidationTokenService {
         console.log('#4 validateTokenListenSuccess');
 
         this.appService.userData = { ...user };
-        this.appService.isAuthenticated = true;
+        this.appService.isAuthenticated.set(true);
         
         this.appService.toastr.success('Re-authentificated!');
-        this.appService.router.navigate(["user-connection-state"]);
+        this.appService.router.navigate(["account"]);
       });
     }
 

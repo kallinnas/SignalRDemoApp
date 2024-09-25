@@ -19,7 +19,7 @@ export class SignalrService {
       .withUrl(environment.hubURL, {
         skipNegotiation: true,
         transport: signalR.HttpTransportType.WebSockets
-        // , accessTokenFactory: () => localStorage.getItem('token')
+        // , accessTokenFactory: () => this.appService.getToken()
       })
       .build();
 

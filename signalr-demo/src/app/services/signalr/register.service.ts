@@ -29,7 +29,6 @@ export class RegisterService {
     await this.signalrService.hubConnection.invoke(this.methodName, user)
       .then(() => {
         console.log('#6 registration After Listener');
-        this.logoutService.logoutListenResponse();
       })
       .catch(err => console.log(err));
   }
@@ -42,10 +41,10 @@ export class RegisterService {
 
       this.appService.userData = { ...user };
       localStorage.setItem('token', user.token);
-      this.appService.isAuthenticated = true;
+      this.appService.isAuthenticated.set(true);
 
       this.appService.toastr.success('Registrated successfully!');
-      this.appService.router.navigate(["user-connection-state"]);
+      this.appService.router.navigate(["account"]);
     });
   }
 

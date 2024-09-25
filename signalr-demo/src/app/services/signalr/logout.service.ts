@@ -14,7 +14,7 @@ export class LogoutService {
   ) { }
 
   logout(): void {
-    console.log('#8 authentificationAsync: First authorization');
+    console.log('#8 logout: invoke');
 
     this.signalrService.hubConnection.invoke(this.methodName, this.appService.userData.id)
       .then(() => {

@@ -29,7 +29,6 @@ export class AuthService {
     await this.signalrService.hubConnection.invoke(this.methodName, user)
       .then(() => {
         console.log('#6 authentificationAsync: After Listener');
-        this.logoutService.logoutListenResponse();
       })
       .catch(err => console.log(err));
   }
@@ -43,13 +42,13 @@ export class AuthService {
 
         this.appService.userData = { ...user };
         localStorage.setItem('token', user.token);
-        this.appService.isAuthenticated = true;
+        this.appService.isAuthenticated.set(true);
 
         this.appService.toastr.success('Login succsessfully!');
 
         if (this.appService.getUserRole() == '1') {
           this.appService.router.navigate(["user-connection-state"]);
-        } else this.appService.router.navigate(["game-manager"]);
+        } else this.appService.router.navigate(["account"]);
       });
     }
 

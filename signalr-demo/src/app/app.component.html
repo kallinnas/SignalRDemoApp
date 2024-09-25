@@ -1,6 +1,6 @@
 <div fxFlexFill fxLayout="column">
 
-    <div *ngIf="appService.isAuthenticated" fxFlex="80px" fxLayoutAlign="space-around center">
+    <div *ngIf="isAuthenticated()" fxFlex="80px" fxLayoutAlign="space-around center">
         <div fxFlex fxLayoutAlign="space-evenly center">
             <a *ngIf="appService.getUserRole() == '1'" routerLink="/user-connection-state" class="router-link">User Connection State</a>
             <a routerLink="/game-manager" class="router-link">Rock-Scissors-Paper</a>
