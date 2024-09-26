@@ -1,4 +1,6 @@
-﻿namespace SignalRDemo.Models;
+﻿using SignalRDemo.Games.RspGame;
+
+namespace SignalRDemo.Models;
 
 public partial class User
 {
@@ -41,6 +43,17 @@ public class UserSignalrDto
     {
         Id = id; Name = name; SignalrId = signalrId; Token = token;
     }
+}
+
+public class UserRspPlayerDto
+{
+    public Guid Id { get; set; }
+    public string Name { get; }
+    public Sign? Sign { get; set; }
+    public int RockPaperScissorsWinAmount { get; set; }
+    public int RockPaperScissorsGameAmount { get; set; }
+
+    public UserRspPlayerDto(string name) => Name = name;
 }
 
 public class TokenRequest

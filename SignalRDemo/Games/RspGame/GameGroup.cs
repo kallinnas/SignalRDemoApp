@@ -1,25 +1,36 @@
-﻿namespace SignalRDemo.Games.RspGame;
+﻿using SignalRDemo.Models;
+
+namespace SignalRDemo.Games.RspGame;
 
 public class GameGroup
 {
-    private Player? _player1;
-    private Player? _player2;
+    public UserRspPlayerDto? Player1;
+    public UserRspPlayerDto? Player2;
     private Game? _game;
 
     public Game Game => _game ?? throw new InvalidOperationException("Game not created");
     public string Name { get; } = Guid.NewGuid().ToString();
     public bool Full => _game != null;
+    public void Reset() => _game = null;
 
     public void AddPlayer(string name)
     {
-        if (_player1 == null)
-            _player1 = new(name);
+        if (Player1 == null)
+        {
+            Player1 = new UserRspPlayerDto(name);
+        }
+
         else
         {
-            _player2 = new(name);
-
-            _game = new(_player1, _player2);
+            Player2 = new UserRspPlayerDto(name);
+            _game = new Game(Player1, Player2);
         }
     }
 
+    public void ResetGame()
+    {
+        _game = null;
+        Player1 = null;
+        Player2 = null;
+    }
 }
