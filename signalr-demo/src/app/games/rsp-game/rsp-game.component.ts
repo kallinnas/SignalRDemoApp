@@ -1,8 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { GeneralModule } from '../../modules/general.model';
 import { map, Observable } from 'rxjs';
-import { GameStatus, Pending, Drawn, Won } from './rsp-game.model';
+import { GameStatus, Pending, Drawn, Won, Disconnect } from './rsp-game.model';
 import { RspGameService } from './rsp-game.service';
+import { AppService } from '../../services/app.service';
 
 interface Output {
   line1: string;
@@ -25,7 +26,8 @@ export class RspGameComponent {
   currentThrow = '';
 
   constructor(
-    private hub: RspGameService
+    private hub: RspGameService,
+    private appService: AppService
   ) {
     this.output$ = this.hub.outcome$!.pipe(
       map(outcome => {
@@ -33,10 +35,10 @@ export class RspGameComponent {
           case 'pending': return this.processPending(outcome.value as Pending);
           case 'drawn': return this.processDrawn(outcome.value as Drawn);
           case 'won': return this.processWon(outcome.value as Won);
+          // case 'disconnect': return this.processReconnection(outcome.value as Disconnect);
           default: throw ('Unexpected result');
         }
-      })
-    );
+      }));
   }
 
   ngOnInit(): void {
@@ -48,6 +50,15 @@ export class RspGameComponent {
       line1: pending.waitingFor == this.game.thisPlayer ?
         'Your opponent has chosen ...' : `Waiting for ${pending.waitingFor}`
     };
+  }
+
+  private processReconnection(disconnect: Disconnect) {
+    alert('Connection with player was lost.');
+    this.appService.router.navigate(['game-manager']);
+    // return {
+    //   line1: disconnect.waitingFor == this.game.thisPlayer ?
+    //     'Your opponent has chosen ...' : `Waiting for ${disconnect.waitingFor}`
+    // };
   }
 
   private processDrawn(drawn: Drawn): Output {

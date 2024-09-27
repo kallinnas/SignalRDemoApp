@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SignalrService } from './signalr.service';
 import { UserSignalrDto } from '../../models/user.model';
 import { AppService } from '../app.service';
-import { LogoutService } from './logout.service';
 
 @Injectable({ providedIn: 'root' })
 export class ValidationTokenService {
@@ -13,7 +12,6 @@ export class ValidationTokenService {
 
   constructor(
     private appService: AppService,
-    private logoutService: LogoutService,
     private signalrService: SignalrService
   ) { }
 
@@ -29,7 +27,7 @@ export class ValidationTokenService {
 
       await this.signalrService.hubConnection.invoke(this.methodName, this.appService.getToken())
         .then(() => {
-          console.log('#6 after validationToken: then()');
+          console.log('#7 after validationToken: then()');
         })
         .catch(err => console.log(err));
     }
@@ -46,9 +44,11 @@ export class ValidationTokenService {
 
         this.appService.userData = { ...user };
         this.appService.isAuthenticated.set(true);
-        
+
         this.appService.toastr.success('Re-authentificated!');
         this.appService.router.navigate(["account"]);
+        
+        this.signalrService.offConnection([this.successCommand, this.failCommand]);
       });
     }
 

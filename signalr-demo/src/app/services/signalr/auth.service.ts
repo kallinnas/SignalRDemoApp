@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SignalrService } from './signalr.service';
 import { UserSignalrDto, UserAuthDto } from '../../models/user.model';
 import { AppService } from '../app.service';
-import { LogoutService } from './logout.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -13,7 +12,6 @@ export class AuthService {
 
   constructor(
     private appService: AppService,
-    private logoutService: LogoutService,
     private signalrService: SignalrService,
   ) { }
 
@@ -49,6 +47,8 @@ export class AuthService {
         if (this.appService.getUserRole() == '1') {
           this.appService.router.navigate(["user-connection-state"]);
         } else this.appService.router.navigate(["account"]);
+
+        this.signalrService.offConnection([this.successCommand, this.failCommand]);
       });
     }
 
@@ -57,7 +57,13 @@ export class AuthService {
 
   private authentificationListenFail() {
     console.log('#2 authentificationListenFail');
-    this.signalrService.hubConnection.on(this.failCommand, () => this.appService.toastr.error("Wrong credentials!"));
+
+    this.signalrService.hubConnection.on(this.failCommand, () => {
+      console.log('#4 wrong credentials');
+
+      // TODO: reset auth password form field
+      this.appService.toastr.error("Wrong credentials!")
+    });
   }
 
 }

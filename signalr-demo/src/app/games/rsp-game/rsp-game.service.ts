@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, merge, startWith, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { GameStatus, Pending, Drawn, Won } from './rsp-game.model';
+import { GameStatus, Pending, Drawn, Won, Disconnect } from './rsp-game.model';
 import { SignalrClient, SignalrConnection } from 'ngx-signalr-websocket';
 import { AppService } from '../../services/app.service';
 
@@ -28,28 +28,7 @@ export class RspGameService {
         this.register();
         this.setupStatusPipe(connection);
         this.setupOutcomePipe(connection);
-      }
-    )
-  }
-
-  private setupOutcomePipe(connection: SignalrConnection): void {
-    console.log('#3 setupOutcomePipe: Pending / Drawn / Won');
-
-    let pending$ = connection.on<[string]>('Pending')
-      .pipe(map(([waitingFor]) => ({ waitingFor } as Pending)));
-
-    let drawn$ = connection.on<[string, string]>('Drawn')
-      .pipe(map(([explanation, scores]) => ({ explanation, scores } as Drawn)));
-
-    let won$ = connection.on<[string, string, string]>('Won')
-      .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
-
-    console.log('#4 set outcome$: pending/drawn/won');
-    this.outcome$ = merge(
-      pending$.pipe(map(value => ({ type: 'pending', value }))),
-      drawn$.pipe(map(value => ({ type: 'drawn', value }))),
-      won$.pipe(map(value => ({ type: 'won', value })))
-    )
+      });
   }
 
   private setupStatusPipe(connection: SignalrConnection): void {
@@ -69,13 +48,37 @@ export class RspGameService {
         } as GameStatus)),
         tap(() => console.log('onGameStarted')));
 
+    let disconnect$ = connection.on<[string]>('PlayerDisconnected')
+      .pipe(
+        tap(() => this.register()),
+        map(() => ({ status: 'waiting' } as GameStatus)),
+      );
+
     this.status$ = merge(waitingForPlayer$.pipe(
-      startWith({ status: 'waiting' } as GameStatus), tap(() => console.log('onMerge waitingForPlayer/gameStarted'))), gameStarted$);
+      startWith({ status: 'waiting' } as GameStatus)), gameStarted$, disconnect$);
+  }
+
+  private setupOutcomePipe(connection: SignalrConnection): void {
+    console.log('#2 setupOutcomePipe: Pending / Drawn / Won = outcome$');
+
+    let pending$ = connection.on<[string]>('Pending')
+      .pipe(map(([waitingFor]) => ({ waitingFor } as Pending)));
+
+    let drawn$ = connection.on<[string, string]>('Drawn')
+      .pipe(map(([explanation, scores]) => ({ explanation, scores } as Drawn)));
+
+    let won$ = connection.on<[string, string, string]>('Won')
+      .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
+
+    this.outcome$ = merge(
+      pending$.pipe(map(value => ({ type: 'pending', value }))),
+      drawn$.pipe(map(value => ({ type: 'drawn', value }))),
+      won$.pipe(map(value => ({ type: 'won', value }))));
   }
 
   register(): void {
     this.playerName = this.appService.userData.name;
-    this.connection?.send('Register', this.playerName);
+    this.connection?.send('Register', this.appService.userData.id);
   }
 
   throw(group: string, selection: 'Rock' | 'Paper' | 'Scissors') {

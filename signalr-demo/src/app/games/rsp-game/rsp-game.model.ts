@@ -11,6 +11,10 @@ export interface Pending {
     waitingFor: string;
 }
 
+export interface Disconnect {
+    waitingFor: string;
+}
+
 export interface Drawn {
     explanation: string;
     scores: string;

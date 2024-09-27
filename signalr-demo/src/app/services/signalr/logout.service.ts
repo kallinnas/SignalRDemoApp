@@ -24,14 +24,13 @@ export class LogoutService {
   }
 
   logoutListenResponse(): void {
-    console.log('#7 logoutListenResponse');
+    console.log('#6 logoutListenResponse');
 
-    this.signalrService.hubConnection.on('Logout_Response', () => {
+    this.signalrService.hubConnection.on(this.successCommand, () => {
       console.log('#9 logoutListenResponse: response');
 
       localStorage.removeItem('token');
-      location.reload();
-      this.signalrService.hubConnection.stop();
+      location.reload(); // No need to stop or unsubscribe since the page will reload.
     });
   }
 }

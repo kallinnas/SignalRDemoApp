@@ -15,10 +15,10 @@ import { RspGameService } from '../rsp-game/rsp-game.service';
 export class GameManagerComponent {
   
   get status$(): Observable<GameStatus> | undefined {
-    return this.hub.status$;
+    return this.rspGameService.status$;
   }
 
   constructor(
-    public hub: RspGameService
+    public rspGameService: RspGameService
   ) { }
 }

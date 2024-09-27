@@ -1,11 +1,9 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GeneralModule } from '../modules/general.model';
 import { UserAuthDto, UserRegistrDto } from '../models/user.model';
 import { AuthService } from '../services/signalr/auth.service';
 import { RegisterService } from '../services/signalr/register.service';
-import { SignalrService } from '../services/signalr/signalr.service';
-import { ValidationTokenService } from '../services/signalr/validation-token.service';
 
 @Component({
   selector: 'app-auth',
@@ -14,7 +12,7 @@ import { ValidationTokenService } from '../services/signalr/validation-token.ser
   templateUrl: './auth.component.html',
   styleUrl: './auth.component.scss'
 })
-export class AuthComponent implements OnInit, OnDestroy {
+export class AuthComponent implements OnInit {
 
   errorMessage = '';
   isRegisterMode: boolean = false;
@@ -23,23 +21,8 @@ export class AuthComponent implements OnInit, OnDestroy {
   constructor(
     private fb: FormBuilder,
     public authService: AuthService,
-    private signalrService: SignalrService,
     private registerService: RegisterService,
-    private validationTokenService: ValidationTokenService,
   ) { }
-
-  ngOnDestroy(): void {
-    if (this.signalrService.hasConnection()) {
-      this.signalrService.offConnection([
-        this.validationTokenService.successCommand,
-        this.validationTokenService.failCommand,
-        this.authService.successCommand,
-        this.authService.failCommand,
-        this.registerService.successCommand,
-        this.registerService.failCommand,
-      ]);
-    }
-  }
 
   ngOnInit(): void {
     this.initialForm();
