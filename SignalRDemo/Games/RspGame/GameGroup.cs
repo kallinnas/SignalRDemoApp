@@ -13,16 +13,15 @@ public class GameGroup
     public bool Full => _game != null;
     public void Reset() => _game = null;
 
-    public void AddPlayer(string name)
+    public void AddPlayer(Guid id, string name)
     {
         if (Player1 == null)
         {
-            Player1 = new UserRspPlayerDto(name);
+            Player1 = new UserRspPlayerDto(name) { Id = id };
         }
-
         else
         {
-            Player2 = new UserRspPlayerDto(name);
+            Player2 = new UserRspPlayerDto(name) { Id = id };
             _game = new Game(Player1, Player2);
         }
     }

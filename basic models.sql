@@ -7,6 +7,7 @@ CREATE TABLE users (
   beerWinAmount SMALLINT NOT NULL,
   beerGameAmount MEDIUMINT NOT NULL,
   rockPaperScissorsWinAmount MEDIUMINT NOT NULL,
+  rockPaperScissorsDrawAmount MEDIUMINT NOT NULL,
   rockPaperScissorsGameAmount INT NOT NULL
 );
 

@@ -12,6 +12,7 @@ public partial class User
     public short BeerWinAmount { get; set; }
     public int BeerGameAmount { get; set; }
     public int RockPaperScissorsWinAmount { get; set; }
+    public int RockPaperScissorsDrawAmount { get; set; }
     public int RockPaperScissorsGameAmount { get; set; }
 
     public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();

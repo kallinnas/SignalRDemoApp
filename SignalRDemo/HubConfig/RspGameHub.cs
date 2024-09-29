@@ -24,15 +24,20 @@ public class RspGameHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task Register(Guid userId)
+    public async Task Register(string userId)
     {
         try
         {
-            var user = await _gameService.GetByIdAsync(userId);
+            if (!Guid.TryParse(userId, out Guid guidUserId))
+            {
+                throw new Exception("Invalid userId format.");
+            }
+
+            var user = await _gameService.GetByIdAsync(guidUserId);
 
             if (user == null) { throw new Exception("User not found."); }
 
-            var group = _manager.Register(user.Name);
+            var group = _manager.Register(guidUserId, user.Name);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, group.Name);
             _connectedPlayers[Context.ConnectionId] = group.Name;
@@ -55,24 +60,24 @@ public class RspGameHub : Hub
     {
         try
         {
+            // Approve connection between users paired during Register()
             var currentPlayerConnectionId = _connectedPlayers.FirstOrDefault(x => x.Value == groupName && x.Key != Context.ConnectionId).Key;
 
             if (currentPlayerConnectionId == null)
             {
-                //await Register(player);
                 await Clients.Group(groupName).SendAsync("PlayerDisconnected");
                 return;
             }
 
+            // Fills up game obg with throw-sign values to hold game state proccess
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
 
-            if (game.Pending)
+            if (game.Pending) // Reports to first-move player about Pending state
             { await Clients.Group(groupName).SendAsync("Pending", game.WaitingFor); }
 
             else
-            {
-                var player1 = _manager.GetGroupGamePlayers().player1;
-                var player2 = _manager.GetGroupGamePlayers().player2;
+            {   // Gets players to define a winner due Beats Sign schema
+                var (player1, player2) = _manager.GetGroupGamePlayers(groupName);
                 var isWinner = Signs.Beats(player1.Sign!.Value, player2.Sign!.Value);
 
                 await _gameService.UpdateGameResultAsync(player1.Id, player2.Id, isWinner);

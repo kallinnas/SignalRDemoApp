@@ -1,7 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using SignalRDemo.Data;
 using SignalRDemo.HubConfig;
+using SignalRDemo.Repositories.Interfaces;
+using SignalRDemo.Repositories;
 using SignalRDemo.Services;
+using SignalRDemo.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,6 +22,9 @@ builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connecti
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IGameService, GameService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<JwtService>();
 

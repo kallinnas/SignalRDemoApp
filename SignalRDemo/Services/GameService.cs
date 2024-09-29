@@ -24,6 +24,12 @@ public class GameService : IGameService
         {
             if ((bool)isWinner) { player1.RockPaperScissorsWinAmount++; }
             else { player2.RockPaperScissorsWinAmount++; }
+        } 
+        
+        else
+        {
+            player1.RockPaperScissorsDrawAmount++;
+            player2.RockPaperScissorsDrawAmount++;
         }
 
         await _userRepository.UpdateContext();

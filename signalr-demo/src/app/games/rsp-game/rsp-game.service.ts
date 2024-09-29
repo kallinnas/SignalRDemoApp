@@ -78,7 +78,8 @@ export class RspGameService {
 
   register(): void {
     this.playerName = this.appService.userData.name;
-    this.connection?.send('Register', this.appService.userData.id);
+    const userId: string = this.appService.userData.id;
+    this.connection?.send('Register', userId);
   }
 
   throw(group: string, selection: 'Rock' | 'Paper' | 'Scissors') {

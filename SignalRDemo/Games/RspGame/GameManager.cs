@@ -8,12 +8,28 @@ public class GameManager
     private Dictionary<string, GameGroup> _games = new();
     private GameGroup? _waitingGroup;
 
-    public (UserRspPlayerDto player1, UserRspPlayerDto player2) GetGroupGamePlayers()
+    public (UserRspPlayerDto player1, UserRspPlayerDto player2) GetGroupGamePlayers(string groupName)
     {
-        return (_waitingGroup!.Player1!, _waitingGroup.Player2!);
+        // Check if the game group exists in the dictionary
+        if (_games.TryGetValue(groupName, out var gameGroup))
+        {
+            // Ensure that both players exist in the game group
+            if (gameGroup.Player1 != null && gameGroup.Player2 != null)
+            {
+                return (gameGroup.Player1, gameGroup.Player2);
+            }
+            else
+            {
+                throw new InvalidOperationException("Both players are not available in the game group.");
+            }
+        }
+        else
+        {
+            throw new KeyNotFoundException($"No game group found with the name: {groupName}");
+        }
     }
 
-    public GameGroup Register(string name)
+    public GameGroup Register(Guid userId, string name)
     {
         lock (_locker)
         {
@@ -23,14 +39,16 @@ public class GameManager
                 _games.TryAdd(_waitingGroup.Name, _waitingGroup);
             }
 
-            _waitingGroup.AddPlayer(name);
-
-            var retVal = _waitingGroup;
+            _waitingGroup.AddPlayer(userId, name);
 
             if (_waitingGroup.Full)
+            {
+                var group = _waitingGroup;
                 _waitingGroup = null;
+                return group;
+            }
 
-            return retVal;
+            return _waitingGroup;
         }
     }
 

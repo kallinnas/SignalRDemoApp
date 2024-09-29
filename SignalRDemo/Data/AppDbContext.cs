@@ -43,10 +43,12 @@ public partial class AppDbContext : DbContext
             entity.HasIndex(e => e.Email, "email").IsUnique();
 
             entity.Property(e => e.Id).HasColumnName("id");
+
             entity.Property(e => e.BeerGameAmount)
                 .HasColumnType("mediumint")
                 .HasColumnName("beerGameAmount");
             entity.Property(e => e.BeerWinAmount).HasColumnName("beerWinAmount");
+
             entity.Property(e => e.Email)
                 .HasMaxLength(50)
                 .HasColumnName("email");
@@ -56,7 +58,11 @@ public partial class AppDbContext : DbContext
             entity.Property(e => e.PasswordHash)
                 .HasMaxLength(60)
                 .HasColumnName("passwordHash");
+
             entity.Property(e => e.RockPaperScissorsGameAmount).HasColumnName("rockPaperScissorsGameAmount");
+            entity.Property(e => e.RockPaperScissorsDrawAmount)
+                .HasColumnType("mediumint")
+                .HasColumnName("rockPaperScissorsDrawAmount");
             entity.Property(e => e.RockPaperScissorsWinAmount)
                 .HasColumnType("mediumint")
                 .HasColumnName("rockPaperScissorsWinAmount");
