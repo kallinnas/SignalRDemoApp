@@ -1,0 +1,21 @@
+button {
+    width: 150px;
+    height: 150px;
+    color: white;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+.rock_btn {
+    background-color: #f44336;
+}
+
+.paper_btn {
+    background-color: #2196F3;
+}
+
+.scissors_btn {
+    background-color: #6fb20c; 
+}

@@ -15,7 +15,8 @@ interface Output {
   selector: 'app-rsp-game',
   standalone: true,
   imports: [GeneralModule],
-  templateUrl: './rsp-game.component.html'
+  templateUrl: './rsp-game.component.html',
+  styleUrl: './rsp-game.component.scss'
 })
 export class RspGameComponent {
 

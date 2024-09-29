@@ -1,8 +1,21 @@
 <p>You are playing against {{opponent}}.</p>
-<p>Click on selection:</p>
-<button (click)="throw('Rock')" [class.highlight]="currentThrow === 'Rock'">Rock</button>
-<button (click)="throw('Paper')" [class.highlight]="currentThrow === 'Paper'">Paper</button>
-<button (click)="throw('Scissors')" [class.highlight]="currentThrow === 'Scissors'">Scissors</button>
+
+<div fxLayoutAlign="center center" fxLayoutGap="20px" style="height: 300px;">
+
+    <button mat-fab color="primary" class="rock_btn" (click)="throw('Rock')">
+        <i class="fa-regular fa-hand-back-fist fa-4x"></i>
+    </button>
+
+    <button mat-fab color="primary" class="paper_btn" (click)="throw('Paper')">
+        <i class="fa-regular fa-hand fa-4x"></i>
+    </button>
+
+    <button mat-fab color="primary" class="scissors_btn" (click)="throw('Scissors')">
+        <i class="fa-regular fa-hand-scissors fa-4x"></i>
+    </button>
+</div>
+
+
 <p>{{(output$ | async)?.line1}}</p>
 <p>{{(output$ | async)?.line2}}</p>
 <p>{{(output$ | async)?.scores}}</p>
