@@ -1,5 +1,5 @@
 <div fxLayout="column" fxLayoutAlign="center center" style="width: 300px; margin: auto;">
-    <h2>{{ isRegisterMode ? 'Register' : 'Login' }}</h2>
+    <h2>{{ isRegisterMode() ? 'SignUp' : 'Login' }}</h2>
 
     <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
 
@@ -19,20 +19,15 @@
                         required.</mat-error>
                 </mat-form-field>
 
-                <mat-form-field appearance="fill" *ngIf="isRegisterMode">
+                <mat-form-field appearance="fill" *ngIf="isRegisterMode()">
                     <mat-label>Name</mat-label>
                     <input matInput formControlName="name" placeholder="Name">
                     <mat-error *ngIf="authForm.controls['name'].hasError('required')">Name is required.</mat-error>
                 </mat-form-field>
             </div>
 
-
-            <button mat-button type="button" (click)="toggleMode()">
-                {{ isRegisterMode ? 'Already have an account? Login' : 'Need an account? Register' }}
-            </button>
-
             <button mat-raised-button color="primary" type="submit" [disabled]="authForm.invalid">
-                {{ isRegisterMode ? 'Register' : 'Login' }}
+                {{ isRegisterMode() ? 'SignUp' : 'Login' }}
             </button>
         </div>
 

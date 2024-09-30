@@ -1,4 +1,4 @@
-<div fxFlexFill fxLayout="column">
+<!-- <div fxFlexFill fxLayout="column">
 
     <div *ngIf="isAuthenticated()" fxFlex="80px" fxLayoutAlign="space-around center">
         <div fxFlex fxLayoutAlign="space-evenly center">
@@ -23,4 +23,22 @@
         </div>
         <p fxFlexAlign="center">Copyright © 2024 SignalR Game System</p>
     </footer>
-</div>
+</div> -->
+
+<mat-sidenav-container>
+
+    <mat-sidenav #sNav role="navigation">
+        <app-sidenav (closeSidenav)="sNav.close()"></app-sidenav>
+    </mat-sidenav>
+
+    <mat-sidenav-content>
+
+        <app-header (sidenavToggle)="sNav.toggle()"></app-header>
+
+        <main>
+            <router-outlet></router-outlet>
+        </main>
+
+    </mat-sidenav-content>
+
+</mat-sidenav-container>

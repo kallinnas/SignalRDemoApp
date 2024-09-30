@@ -15,13 +15,14 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { MatSidenavModule } from '@angular/material/sidenav';
 
 
 @NgModule({
   exports: [MatTableModule, MatButtonModule, MatIconModule, MatSortModule, MatPaginatorModule,
     MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatSelectModule, MatOptionModule,
     MatDatepickerModule, MatNativeDateModule, MatCardModule, MatDialogModule, MatProgressSpinnerModule,
-    MatListModule, MatToolbarModule,
+    MatListModule, MatToolbarModule, MatSidenavModule
   ]
 })
 export class MaterialModule { }

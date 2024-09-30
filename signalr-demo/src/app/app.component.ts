@@ -4,12 +4,13 @@ import { GeneralModule } from './modules/general.model';
 import { LoginService } from './services/signalr/login.service';
 import { AppService } from './services/app.service';
 import { LogoutService } from './services/signalr/logout.service';
-import { AsyncPipe } from '@angular/common';
+import { SidenavComponent } from './components/sidenav/sidenav.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, GeneralModule, RouterLink],
+  imports: [RouterOutlet, GeneralModule, RouterLink, SidenavComponent, HeaderComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })

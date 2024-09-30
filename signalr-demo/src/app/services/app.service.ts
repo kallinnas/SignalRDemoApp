@@ -8,18 +8,19 @@ export class AppService {
 
   userData!: UserSignalrDto;
   isAuthenticated = signal<boolean>(false);
+  isRegisterMode = signal<boolean>(false);
 
   constructor(
     public router: Router,
     public toastr: ToastrService,
   ) { }
 
-  getUserRole(): string | null {
-    const token = this.getToken();
-    if (!token) return null;
-
+  isAdminUser(): boolean {
+    const token = localStorage.getItem('token');
+    if (!token) return false;
+  
     const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload['role'];
+    return payload['role'] === '1';
   }
 
   getToken(): string | null {

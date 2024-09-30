@@ -10,8 +10,7 @@ import { GameManagerComponent } from "../../games/game-manager/game-manager.comp
   selector: 'app-user-connection-state',
   standalone: true,
   imports: [GeneralModule, GameManagerComponent, GameManagerComponent],
-  templateUrl: './user-connection-state.component.html',
-  styleUrl: './user-connection-state.component.scss'
+  templateUrl: './user-connection-state.component.html', styleUrl: './user-connection-state.component.scss'
 })
 export class UserConnectionStateComponent {
 

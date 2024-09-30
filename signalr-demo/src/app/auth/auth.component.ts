@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GeneralModule } from '../modules/general.model';
 import { UserAuthDto, UserRegistrDto } from '../models/user.model';
 import { AuthService } from '../services/signalr/auth.service';
 import { RegisterService } from '../services/signalr/register.service';
+import { AppService } from '../services/app.service';
 
 @Component({
   selector: 'app-auth',
@@ -15,11 +16,12 @@ import { RegisterService } from '../services/signalr/register.service';
 export class AuthComponent implements OnInit {
 
   errorMessage = '';
-  isRegisterMode: boolean = false;
+  isRegisterMode = computed(() => this.appService.isRegisterMode());
   authForm!: FormGroup;
 
   constructor(
     private fb: FormBuilder,
+    public appService: AppService,
     public authService: AuthService,
     private registerService: RegisterService,
   ) { }
@@ -36,16 +38,12 @@ export class AuthComponent implements OnInit {
     });
   }
 
-  toggleMode() {
-    this.isRegisterMode = !this.isRegisterMode;
-  }
-
   onSubmit() {
     if (this.authForm.invalid) {
       return;
     }
 
-    if (this.isRegisterMode) {
+    if (this.isRegisterMode()) {
       this.registerService.launchRegistration(new UserRegistrDto(this.authForm.value.email, this.authForm.value.password, this.authForm.value.name));
     }
 

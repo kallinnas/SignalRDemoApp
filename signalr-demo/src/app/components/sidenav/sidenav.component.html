@@ -1,0 +1,36 @@
+<mat-nav-list class="sidenav-list">
+    <a *ngIf="isAuthenticated()" mat-list-item (click)="onAccessMode()" (click)="onCloseSidenav()">
+        <i class="fa-solid fa-user"></i>
+        Account
+    </a>
+
+    <a *ngIf="!isAuthenticated() && !isRegisterMode()" mat-list-item (click)="onAccessMode()"
+        (click)="onCloseSidenav()">
+        <i class="fa-solid fa-user-plus"></i>
+        SignUp
+    </a>
+
+    <a *ngIf="!isAuthenticated() && isRegisterMode()" mat-list-item (click)="onAccessMode()" (click)="onCloseSidenav()">
+        <i class="fa-solid fa-arrow-right-to-bracket"></i>
+        Login
+    </a>
+
+    <mat-divider></mat-divider>
+
+    <a *ngIf="isAuthenticated()" mat-list-item routerLink="/game-manager" (click)="onCloseSidenav()">
+        <i class="fa-solid fa-gamepad"></i>
+        {{rspBtn}}
+    </a>
+
+    <a *ngIf="appService.isAdminUser()" mat-list-item routerLink="/user-connection-state" (click)="onCloseSidenav()">
+        <i class="fa-solid fa-network-wired"></i>
+        {{connBtn}}
+    </a>
+
+    <mat-divider></mat-divider>
+
+    <a *ngIf="isAuthenticated()" mat-list-item (click)="onLogout()">
+        <i class="fa-solid fa-right-from-bracket"></i>
+        Logout
+    </a>
+</mat-nav-list>

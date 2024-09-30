@@ -44,7 +44,7 @@ export class AuthService {
 
         this.appService.toastr.success('Login succsessfully!');
 
-        if (this.appService.getUserRole() == '1') {
+        if (this.appService.isAdminUser()) {
           this.appService.router.navigate(["user-connection-state"]);
         } else this.appService.router.navigate(["account"]);
 
