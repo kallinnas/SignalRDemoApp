@@ -16,11 +16,15 @@ export class AppService {
   ) { }
 
   isAdminUser(): boolean {
-    const token = localStorage.getItem('token');
-    if (!token) return false;
-  
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload['role'] === '1';
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      if (!token) return false;
+
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return payload['role'] === '1';
+    } 
+    
+    else return false;
   }
 
   getToken(): string | null {

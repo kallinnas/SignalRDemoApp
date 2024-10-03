@@ -1,44 +1,21 @@
-<!-- <div fxFlexFill fxLayout="column">
-
-    <div *ngIf="isAuthenticated()" fxFlex="80px" fxLayoutAlign="space-around center">
-        <div fxFlex fxLayoutAlign="space-evenly center">
-            <a *ngIf="appService.getUserRole() == '1'" routerLink="/user-connection-state" class="router-link">User Connection State</a>
-            <a routerLink="/game-manager" class="router-link">Rock-Scissors-Paper</a>
-        </div>
-
-        <div fxFlex="100px" fxLayoutAlign="center">
-            <a style="cursor: pointer;" (click)="logoutService.logout()"> Logout </a>
-        </div>
-    </div>
-
-    <div fxFlex="100%" fxLayout="column" style="overflow: auto;">
-        <div fxFlex style="margin: 1%;">
-            <router-outlet></router-outlet>
-        </div>
-    </div>
-
-    <footer fxLayout="column">
-        <div fxLayout="row">
-            <hr fxFlex="90">
-        </div>
-        <p fxFlexAlign="center">Copyright © 2024 SignalR Game System</p>
-    </footer>
-</div> -->
-
 <mat-sidenav-container>
-
     <mat-sidenav #sNav role="navigation">
         <app-sidenav (closeSidenav)="sNav.close()"></app-sidenav>
     </mat-sidenav>
 
-    <mat-sidenav-content>
-
+    <mat-sidenav-content fxLayout="column" fxFill>
         <app-header (sidenavToggle)="sNav.toggle()"></app-header>
 
-        <main>
+        <main fxFlex>
             <router-outlet></router-outlet>
         </main>
 
+        <footer fxLayout="column" style="width: 100%;">
+            <div fxLayout="row">
+                <hr fxFlex="90">
+            </div>
+            <p fxFlexAlign="center">Copyright © 2024 SignalR Game System</p>
+        </footer>
     </mat-sidenav-content>
 
 </mat-sidenav-container>
