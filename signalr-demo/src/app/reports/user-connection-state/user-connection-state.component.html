@@ -2,7 +2,7 @@
 
     <mat-toolbar color="primary" *ngIf="appService.userData">
         <mat-toolbar-row>
-            <mat-card fxLayout="row" fxLayoutAlign="space-around center" fxFlex="100%" fxLayoutGap="20px">
+            <mat-card fxLayout="row" fxLayoutAlign="space-around center" fxFlex="100%" fxLayoutGap="20px" style="color: black;">
                 <div>Welcome, {{ appService.userData.name }}</div>
                 <div> Connection ID: {{ appService.userData.signalrId }} </div>
             </mat-card>
