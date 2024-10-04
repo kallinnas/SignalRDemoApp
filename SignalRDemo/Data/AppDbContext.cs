@@ -59,11 +59,11 @@ public partial class AppDbContext : DbContext
                 .HasMaxLength(60)
                 .HasColumnName("passwordHash");
 
-            entity.Property(e => e.RockPaperScissorsGameAmount).HasColumnName("rockPaperScissorsGameAmount");
-            entity.Property(e => e.RockPaperScissorsDrawAmount)
+            entity.Property(e => e.RspGames).HasColumnName("rockPaperScissorsGameAmount");
+            entity.Property(e => e.RspDraws)
                 .HasColumnType("mediumint")
                 .HasColumnName("rockPaperScissorsDrawAmount");
-            entity.Property(e => e.RockPaperScissorsWinAmount)
+            entity.Property(e => e.RspWins)
                 .HasColumnType("mediumint")
                 .HasColumnName("rockPaperScissorsWinAmount");
             entity.Property(e => e.Role).HasColumnName("role");

@@ -29,7 +29,8 @@ public class GameManager
         }
     }
 
-    public GameGroup Register(Guid userId, string name)
+    //public GameGroup Register(Guid userId, string name)
+    public GameGroup Register(UserRspPlayerDto user)
     {
         lock (_locker)
         {
@@ -39,7 +40,7 @@ public class GameManager
                 _games.TryAdd(_waitingGroup.Name, _waitingGroup);
             }
 
-            _waitingGroup.AddPlayer(userId, name);
+            _waitingGroup.AddPlayer(user);
 
             if (_waitingGroup.Full)
             {

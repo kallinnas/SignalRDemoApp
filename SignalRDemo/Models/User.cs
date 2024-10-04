@@ -11,9 +11,9 @@ public partial class User
     public string PasswordHash { get; set; } = null!;
     public short BeerWinAmount { get; set; }
     public int BeerGameAmount { get; set; }
-    public int RockPaperScissorsWinAmount { get; set; }
-    public int RockPaperScissorsDrawAmount { get; set; }
-    public int RockPaperScissorsGameAmount { get; set; }
+    public int RspWins { get; set; }
+    public int RspDraws { get; set; }
+    public int RspGames { get; set; }
 
     public virtual ICollection<Connection> Connections { get; set; } = new List<Connection>();
 }
@@ -51,10 +51,19 @@ public class UserRspPlayerDto
     public Guid Id { get; set; }
     public string Name { get; }
     public Sign? Sign { get; set; }
-    public int RockPaperScissorsWinAmount { get; set; }
-    public int RockPaperScissorsGameAmount { get; set; }
+    public int RspWins { get; set; }
+    public int RspGames { get; set; }
+    public int RspDraws { get; set; }
 
     public UserRspPlayerDto(string name) => Name = name;
+    public UserRspPlayerDto(Guid id, string name, int rockPaperScissorsWinAmount, int rockPaperScissorsGameAmount, int rockPaperScissorsDrawAmount)
+    {
+        Id = id;
+        Name = name;
+        RspWins = rockPaperScissorsWinAmount;
+        RspGames = rockPaperScissorsGameAmount;
+        RspDraws = rockPaperScissorsDrawAmount;
+    }
 }
 
 public class TokenRequest

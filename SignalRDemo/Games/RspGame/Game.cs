@@ -33,20 +33,20 @@ public class Game
         {
             case true:
                 {
-                    Player1.RockPaperScissorsWinAmount++;
-                    Player1.RockPaperScissorsGameAmount++;
+                    Player1.RspWins++;
+                    Player1.RspGames++;
                     break;
                 }
             case false:
                 {
-                    Player2.RockPaperScissorsWinAmount++;
-                    Player2.RockPaperScissorsGameAmount++;
+                    Player2.RspWins++;
+                    Player2.RspGames++;
                     break;
                 }
             default: // Draw
                 {
-                    Player1.RockPaperScissorsGameAmount++;
-                    Player2.RockPaperScissorsGameAmount++;
+                    Player1.RspGames++;
+                    Player2.RspGames++;
                     break;
                 }
         }
@@ -55,7 +55,7 @@ public class Game
         Player2.Sign = null;
     }
 
-    public string Scores => $"{Player1.Name}: {Player1.RockPaperScissorsWinAmount}. {Player2.Name}: {Player2.RockPaperScissorsWinAmount}.";
+    public string Scores => $"{Player1.Name}: {Player1.RspWins}. {Player2.Name}: {Player2.RspWins}.";
 
     public string? WaitingFor => Player1.Sign == null ? Player1.Name : Player2.Name; // Displays opponents name during his Throw
 

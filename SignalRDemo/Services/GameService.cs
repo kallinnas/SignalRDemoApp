@@ -17,26 +17,25 @@ public class GameService : IGameService
 
         if (player1 == null || player2 == null) { throw new Exception("Players not found."); }
 
-        player1.RockPaperScissorsGameAmount++;
-        player2.RockPaperScissorsGameAmount++;
+        player1.RspGames++;
+        player2.RspGames++;
 
         if (isWinner != null)
         {
-            if ((bool)isWinner) { player1.RockPaperScissorsWinAmount++; }
-            else { player2.RockPaperScissorsWinAmount++; }
-        } 
-        
+            if ((bool)isWinner) { player1.RspWins++; }
+            else { player2.RspWins++; }
+        }
+
         else
         {
-            player1.RockPaperScissorsDrawAmount++;
-            player2.RockPaperScissorsDrawAmount++;
+            player1.RspDraws++;
+            player2.RspDraws++;
         }
 
         await _userRepository.UpdateContext();
     }
 
-    public async Task<User?> GetByIdAsync(Guid id)
-    {
-        return await _userRepository.GetByIdAsync(id);
-    }
+    public async Task<User?> GetByIdAsync(Guid id) { return await _userRepository.GetByIdAsync(id); }
+
+    public async Task<UserRspPlayerDto?> GetUserRspPlayerAsync(Guid id) { return await _userRepository.GetUserRspPlayerAsync(id); }
 }

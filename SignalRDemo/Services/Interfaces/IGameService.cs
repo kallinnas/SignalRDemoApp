@@ -6,4 +6,5 @@ public interface IGameService
 {
     Task UpdateGameResultAsync(Guid player1Id, Guid player2Id, bool? isWinner);
     Task<User?> GetByIdAsync(Guid id);
+    Task<UserRspPlayerDto?> GetUserRspPlayerAsync(Guid id);
 }

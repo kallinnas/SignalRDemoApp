@@ -33,18 +33,20 @@ public class RspGameHub : Hub
                 throw new Exception("Invalid userId format.");
             }
 
-            var user = await _gameService.GetByIdAsync(guidUserId);
+            //var user = await _gameService.GetByIdAsync(guidUserId);
+            var user = await _gameService.GetUserRspPlayerAsync(guidUserId);
 
             if (user == null) { throw new Exception("User not found."); }
 
-            var group = _manager.Register(guidUserId, user.Name);
+            var group = _manager.Register(user);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, group.Name);
             _connectedPlayers[Context.ConnectionId] = group.Name;
 
             if (group.Full)
             {
-                await Clients.Group(group.Name).SendAsync("GameStarted", group.Game.Player1.Name, group.Game.Player2.Name, group.Name);
+                await Clients.Group(group.Name).SendAsync("GameStarted", group.Game.Player1, group.Game.Player2, group.Name);
+                //await Clients.Group(group.Name).SendAsync("GameStarted", group.Game.Player1.Name, group.Game.Player2.Name, group.Name);
             }
 
             else
