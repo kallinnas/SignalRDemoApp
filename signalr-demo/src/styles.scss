@@ -23,3 +23,22 @@ body {
 }
 // HEADER [END]
 
+i{
+    margin: 4px;
+}
+
+
+// TOAST MSG WO INFLUENCE ON UI [START]
+.toast-container {
+    position: fixed; /* Ensures the toast doesn't affect layout */
+    top: 0;
+    right: 0;
+    z-index: 9999;
+    width: auto; /* Set an appropriate width */
+    max-width: 300px; /* Optional: limit the width to avoid wide messages */
+}
+
+.toast {
+    margin: 0; /* Prevents extra margin/padding that could affect layout */
+}
+// TOAST MSG WO INFLUENCE ON UI [END]
