@@ -1,16 +1,19 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, merge, startWith, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { GameStatus, Pending, Drawn, Won, Disconnect } from './rsp-game.model';
+import { GameStatus, Pending, Drawn, Won } from './rsp-game.model';
 import { SignalrClient, SignalrConnection } from 'ngx-signalr-websocket';
 import { AppService } from '../../services/app.service';
+import { UserRspPlayerDto } from '../../models/user.model';
 
 @Injectable({ providedIn: 'root' })
 export class RspGameService {
 
   private connection?: SignalrConnection;
   private playerName = "";
+
+  waitingUser = signal<UserRspPlayerDto | null>(null);
 
   status$?: Observable<GameStatus>;
   outcome$?: Observable<{ type: string, value: Pending | Drawn | Won }>;
@@ -40,7 +43,7 @@ export class RspGameService {
         tap(() => console.log('onWaitingForPlayer'))
       );
 
-    let gameStarted$ = connection.on<[string, string, string]>('GameStarted')
+    let gameStarted$ = connection.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
       .pipe(
         map(([player1, player2, group]) => ({
           status: 'playing', thisPlayer: this.playerName,

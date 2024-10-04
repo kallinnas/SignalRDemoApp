@@ -28,6 +28,14 @@ export class UserSignalrDto {
     token!: string;
 }
 
+export class UserRspPlayerDto {
+    id!: string;
+    name!: string;
+    rspWins!: number;
+    rspGames!: number;
+    rspDraws!: number;
+}
+
 export class TokenRequest {
     token!: string;
 }

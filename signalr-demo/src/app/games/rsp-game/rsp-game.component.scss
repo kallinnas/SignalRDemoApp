@@ -1,6 +1,10 @@
+:host{
+    height: 100%;
+}
+
 button {
-    width: 150px;
-    height: 150px;
+    width: 80px;
+    height: 80px;
     color: white;
 }
 
@@ -18,4 +22,8 @@ button:hover {
 
 .scissors_btn {
     background-color: #6fb20c; 
+}
+
+.board {
+  border: 1px solid black;
 }

@@ -5,11 +5,7 @@ import { GameStatus, Pending, Drawn, Won, Disconnect } from './rsp-game.model';
 import { RspGameService } from './rsp-game.service';
 import { AppService } from '../../services/app.service';
 
-interface Output {
-  line1: string;
-  line2?: string;
-  scores?: string;
-}
+interface Output { line1: string; line2?: string; scores?: string; }
 
 @Component({
   selector: 'app-rsp-game',
@@ -23,14 +19,19 @@ export class RspGameComponent {
   @Input() game!: GameStatus;
   output$: Observable<Output>;
 
-  opponent? = '';
+  opponent: any = 'opponent';
+  user: any = 'user';
+
+  statTitles = ['Wins', 'Loses', 'Draws', 'Wins', 'Loses', 'Draws'];
+  chosenIcon!: string;
+
   currentThrow = '';
 
   constructor(
-    private hub: RspGameService,
+    public rspGameService: RspGameService,
     private appService: AppService
   ) {
-    this.output$ = this.hub.outcome$!.pipe(
+    this.output$ = this.rspGameService.outcome$!.pipe(
       map(outcome => {
         switch (outcome.type) {
           case 'pending': return this.processPending(outcome.value as Pending);
@@ -40,6 +41,9 @@ export class RspGameComponent {
           default: throw ('Unexpected result');
         }
       }));
+
+      console.log(rspGameService.waitingUser());
+      
   }
 
   ngOnInit(): void {
@@ -74,9 +78,11 @@ export class RspGameComponent {
     return { line1: won.winner == this.game.thisPlayer ? 'You won!' : `${won.winner} won.`, line2: won.explanation, scores: won.scores };
   }
 
-  throw(selection: 'Rock' | 'Paper' | 'Scissors'): void {
+  throw(selection: 'Rock' | 'Paper' | 'Scissors', chosenIcon: string): void {
+    this.chosenIcon = chosenIcon;
     this.currentThrow = selection;
-    this.hub.throw(this.game.group!, selection);
+    this.rspGameService.throw(this.game.group!, selection);
   }
 
 }
+

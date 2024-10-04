@@ -22,7 +22,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
   exports: [MatTableModule, MatButtonModule, MatIconModule, MatSortModule, MatPaginatorModule,
     MatFormFieldModule, MatInputModule, MatAutocompleteModule, MatSelectModule, MatOptionModule,
     MatDatepickerModule, MatNativeDateModule, MatCardModule, MatDialogModule, MatProgressSpinnerModule,
-    MatListModule, MatToolbarModule, MatSidenavModule
+    MatListModule, MatToolbarModule, MatSidenavModule, MatProgressSpinnerModule
   ]
 })
 export class MaterialModule { }
