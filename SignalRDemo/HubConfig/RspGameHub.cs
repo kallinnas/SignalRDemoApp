@@ -33,7 +33,6 @@ public class RspGameHub : Hub
                 throw new Exception("Invalid userId format.");
             }
 
-            //var user = await _gameService.GetByIdAsync(guidUserId);
             var user = await _gameService.GetUserRspPlayerAsync(guidUserId);
 
             if (user == null) { throw new Exception("User not found."); }
@@ -46,7 +45,6 @@ public class RspGameHub : Hub
             if (group.Full)
             {
                 await Clients.Group(group.Name).SendAsync("GameStarted", group.Game.Player1, group.Game.Player2, group.Name);
-                //await Clients.Group(group.Name).SendAsync("GameStarted", group.Game.Player1.Name, group.Game.Player2.Name, group.Name);
             }
 
             else
@@ -73,6 +71,8 @@ public class RspGameHub : Hub
 
             // Fills up game obg with throw-sign values to hold game state proccess
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
+            var player1Sign = game.Player1.Sign;
+            var player2Sign = game.Player2.Sign;
 
             if (game.Pending) // Reports to first-move player about Pending state
             { await Clients.Group(groupName).SendAsync("Pending", game.WaitingFor); }
@@ -93,7 +93,7 @@ public class RspGameHub : Hub
                 { await Clients.Group(groupName).SendAsync("Drawn", explanation, game.Scores); }
 
                 else
-                { await Clients.Group(groupName).SendAsync("Won", winner, explanation, game.Scores); }
+                { await Clients.Group(groupName).SendAsync("Won", winner, player1Sign, player2Sign); }
             }
         }
 
