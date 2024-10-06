@@ -1,52 +1,60 @@
 <div fxFlex fxLayout="column">
 
-    <div class="board" fxFlex="12%" fxLayout="column">
+    <div class="boarded" fxFlex="12%" fxLayout="column">
         <div fxFlex fxLayout="row">
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player1?.name }}</div>
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player2?.name }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerName() }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getOpponentName() }}</div>
         </div>
         <div fxFlex fxLayout="row">
-            <div class="board" fxFlex fxLayoutAlign="center center" *ngFor="let title of statTitles">{{ title }}</div>
+            <div fxFlex fxLayoutAlign="center center" *ngFor="let column of displayedColumns">{{ column }}</div>
+            <div fxFlex fxLayoutAlign="center center" *ngFor="let column of displayedColumns">{{ column }}</div>
         </div>
         <div fxFlex fxLayout="row">
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player1?.rspWins }}</div>
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player1?.rspGames }}</div>
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player1?.rspDraws }}</div>
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player2?.rspWins }}</div>
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player2?.rspGames }}</div>
-            <div class="board" fxFlex fxLayoutAlign="center center">{{ game.player2?.rspDraws }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ game.player1?.rspWins }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ game.player1?.rspGames }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ game.player1?.rspDraws }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ game.player2?.rspWins }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ game.player2?.rspGames }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ game.player2?.rspDraws }}</div>
         </div>
     </div>
 
     <div fxFlex="45%" fxLayoutAlign="space-between center">
         <div class="result" fxFlex fxLayoutAlign="center center">
-            <ng-container *ngIf="chosenIcon">
-                <i [class]="chosenIcon"></i>
+            <ng-container *ngIf="playerChosenIcon">
+                <i [class]="playerChosenIcon.icon"></i>
             </ng-container>
         </div>
-        <mat-spinner></mat-spinner>
+
+        <div *ngIf="!isOpponentMadeMove()" fxLayout="column" fxLayoutAlign="center center">
+            <mat-spinner></mat-spinner>
+            <p *ngIf="!playerChosenIcon">Waiting for your move...</p>
+            <p *ngIf="playerChosenIcon">Waiting for opponent move...</p>
+        </div>
+
+        <p *ngIf="game?.winner && isWinnerOpponent()">Loses</p>
+        <p *ngIf="game?.winner && !isWinnerOpponent()">Beats</p>
+
         <div class="result" fxFlex fxLayoutAlign="center center">
-            <ng-container *ngIf="chosenIcon">
-                <i [class]="chosenIcon"></i>
+            <ng-container *ngIf="isOpponentMadeMove()">
+                <i [class]="opponentChosenIcon.icon"></i>
             </ng-container>
         </div>
     </div>
 
     <div fxFlex="28%" fxLayoutAlign="center center" fxLayoutGap="40px">
 
-            <button mat-fab color="primary" class="rock_btn"
-                (click)="throw('Rock', 'fa-regular fa-hand-back-fist fa-4x')">
-                <i class="fa-regular fa-hand-back-fist fa-4x"></i>
-            </button>
+        <button mat-fab color="primary" class="rock_btn" (click)="throw(sign.Rock.value)">
+            <i class="{{sign.Rock.icon}}"></i>
+        </button>
 
-            <button mat-fab color="primary" class="paper_btn" (click)="throw('Paper', 'fa-regular fa-hand fa-4x')">
-                <i class="fa-regular fa-hand fa-4x"></i>
-            </button>
+        <button mat-fab color="primary" class="paper_btn" (click)="throw(sign.Paper.value)">
+            <i class="{{sign.Paper.icon}}"></i>
+        </button>
 
-            <button mat-fab color="primary" class="scissors_btn"
-                (click)="throw('Scissors', 'fa-regular fa-hand-scissors fa-4x')">
-                <i class="fa-regular fa-hand-scissors fa-4x"></i>
-            </button>
+        <button mat-fab color="primary" class="scissors_btn" (click)="throw(sign.Scissors.value)">
+            <i class="{{sign.Scissors.icon}}"></i>
+        </button>
     </div>
 
     <div fxFlex="15%" class="message-section" fxLayout="column" fxLayoutAlign="start center">

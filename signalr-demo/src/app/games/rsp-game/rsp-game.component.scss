@@ -1,4 +1,4 @@
-:host{
+:host {
     height: 100%;
 }
 
@@ -21,9 +21,34 @@ button:hover {
 }
 
 .scissors_btn {
-    background-color: #6fb20c; 
+    background-color: #6fb20c;
 }
 
-.board {
-  border: 1px solid black;
+
+// TABLE BOARDERS [START]
+.boarded {
+    display: flex;
+    flex-direction: column;
 }
+
+.boarded div {
+    display: flex;
+    flex-direction: row;
+}
+
+.boarded div div {
+    /* Apply only top and left borders */
+    border-top: 1px solid black;
+    border-left: 1px solid black;
+}
+
+/* Add the right border only to the last child in a row */
+.boarded div div:last-child {
+    border-right: 1px solid black;
+}
+
+/* Add the bottom border only to the last row of cells */
+.boarded div:last-child div {
+    border-bottom: 1px solid black;
+}
+// TABLE BOARDERS [END]

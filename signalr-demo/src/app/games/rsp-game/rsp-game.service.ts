@@ -40,13 +40,12 @@ export class RspGameService {
     let waitingForPlayer$ = connection.on<[]>('WaitingForPlayer')
       .pipe(
         map(() => ({ status: 'waiting' } as GameStatus)),
-        tap(() => console.log('onWaitingForPlayer'))
-      );
+        tap(() => console.log('onWaitingForPlayer')));
 
     let gameStarted$ = connection.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
       .pipe(
         map(([player1, player2, group]) => ({
-          status: 'playing', thisPlayer: this.playerName,
+          status: 'playing', player: this.playerName,
           player1, player2, group
         } as GameStatus)),
         tap(() => console.log('onGameStarted')));
@@ -54,8 +53,7 @@ export class RspGameService {
     let disconnect$ = connection.on<[string]>('PlayerDisconnected')
       .pipe(
         tap(() => this.register()),
-        map(() => ({ status: 'waiting' } as GameStatus)),
-      );
+        map(() => ({ status: 'waiting' } as GameStatus)));
 
     this.status$ = merge(waitingForPlayer$.pipe(
       startWith({ status: 'waiting' } as GameStatus)), gameStarted$, disconnect$);
@@ -71,7 +69,8 @@ export class RspGameService {
       .pipe(map(([explanation, scores]) => ({ explanation, scores } as Drawn)));
 
     let won$ = connection.on<[string, string, string]>('Won')
-      .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
+      .pipe(map(([winner, player1Sign, player2Sign]) => ({ winner, player1Sign, player2Sign } as Won)));
+      // .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
 
     this.outcome$ = merge(
       pending$.pipe(map(value => ({ type: 'pending', value }))),
@@ -85,7 +84,7 @@ export class RspGameService {
     this.connection?.send('Register', userId);
   }
 
-  throw(group: string, selection: 'Rock' | 'Paper' | 'Scissors') {
+  throw(group: string, selection: string) {
     this.connection?.send('Throw', group, this.playerName, selection);
   }
 }
