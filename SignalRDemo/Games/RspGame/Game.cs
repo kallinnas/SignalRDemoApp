@@ -57,7 +57,7 @@ public class Game
 
     public string Scores => $"{Player1.Name}: {Player1.RspWins}. {Player2.Name}: {Player2.RspWins}.";
 
-    public string? WaitingFor => Player1.Sign == null ? Player1.Name : Player2.Name; // Displays opponents name during his Throw
+    public string? WaitingForOpponentsName => Player1.Sign == null ? Player1.Name : Player2.Name; // Displays opponents name during his Throw
 
     public string Explanation
     {

@@ -12,8 +12,8 @@ public class GameService : IGameService
 
     public async Task UpdateGameResultAsync(Guid player1Id, Guid player2Id, bool? isWinner)
     {
-        var player1 = await _userRepository.GetByIdAsync(player1Id);
-        var player2 = await _userRepository.GetByIdAsync(player2Id);
+        var player1 = await _userRepository.GetUserRspPlayerAsync(player1Id);
+        var player2 = await _userRepository.GetUserRspPlayerAsync(player2Id);
 
         if (player1 == null || player2 == null) { throw new Exception("Players not found."); }
 

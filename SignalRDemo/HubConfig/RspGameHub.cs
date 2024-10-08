@@ -71,11 +71,9 @@ public class RspGameHub : Hub
 
             // Fills up game obg with throw-sign values to hold game state proccess
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
-            var player1Sign = game.Player1.Sign;
-            var player2Sign = game.Player2.Sign;
 
-            if (game.Pending) // Reports to first-move player about Pending state
-            { await Clients.Group(groupName).SendAsync("Pending", game.WaitingFor); }
+            if (game.Pending) // Returns opponentsName and reports to first-move player about Pending state 
+            { await Clients.Group(groupName).SendAsync("Pending", game.WaitingForOpponentsName); }
 
             else
             {   // Gets players to define a winner due Beats Sign schema
@@ -85,15 +83,14 @@ public class RspGameHub : Hub
                 await _gameService.UpdateGameResultAsync(player1.Id, player2.Id, isWinner);
 
                 var winner = game.Winner;
-                var explanation = game.Explanation;
-
-                game.Reset();
 
                 if (winner == null)
-                { await Clients.Group(groupName).SendAsync("Drawn", explanation, game.Scores); }
+                { await Clients.Group(groupName).SendAsync("Drawn", game.Explanation, game.Scores); }
 
                 else
-                { await Clients.Group(groupName).SendAsync("Won", winner, player1Sign, player2Sign); }
+                { await Clients.Group(groupName).SendAsync("Won", winner, game.Explanation, player1, player2); }
+
+                game.Reset();
             }
         }
 
