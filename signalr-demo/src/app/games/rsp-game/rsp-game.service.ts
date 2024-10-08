@@ -11,7 +11,7 @@ import { UserRspPlayerDto } from '../../models/user.model';
 export class RspGameService {
 
   private connection?: SignalrConnection;
-  private playerName = "";
+  playerName = "";
   isFirstPlayer: boolean = false;
 
   waitingUser = signal<UserRspPlayerDto | null>(null);
@@ -54,27 +54,21 @@ export class RspGameService {
         } as GameStatus)),
         tap(() => console.log('onGameStarted')));
 
-    let disconnect$ = connection.on<[string]>('PlayerDisconnected')
-      .pipe(
-        tap(() => this.register()),
-        map(() => ({ status: 'waiting' } as GameStatus)));
-
     this.status$ = merge(waitingForPlayer$.pipe(
-      startWith({ status: 'waiting' } as GameStatus)), gameStarted$, disconnect$);
+      startWith({ status: 'waiting' } as GameStatus)), gameStarted$);
   }
 
   private setupOutcomePipe(connection: SignalrConnection): void {
     console.log('#2 setupOutcomePipe: Pending / Drawn / Won = outcome$');
 
-    let pending$ = connection.on<[string]>('Pending')
-      .pipe(map(([waitingFor]) => ({ waitingFor } as Pending)));
+    let pending$ = connection.on<[string]>('Pending')// waitingForOpponentsName displays opponents name during his Throw
+      .pipe(map(([waitingForOpponentsName]) => ({ opponentsName: waitingForOpponentsName } as Pending)));
 
     let drawn$ = connection.on<[string, string]>('Drawn')
       .pipe(map(([explanation, scores]) => ({ explanation, scores } as Drawn)));
 
-    let won$ = connection.on<[string, string, string]>('Won')
-      .pipe(map(([winner, player1Sign, player2Sign]) => ({ winner, player1Sign, player2Sign } as Won)));
-    // .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
+    let won$ = connection.on<[string, string, UserRspPlayerDto, UserRspPlayerDto]>('Won')
+      .pipe(map(([winner, explanation, player1, player2]) => ({ winner, explanation, player1, player2 } as Won)));
 
     this.outcome$ = merge(
       pending$.pipe(map(value => ({ type: 'pending', value }))),

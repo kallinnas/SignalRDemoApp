@@ -31,6 +31,7 @@ export class UserSignalrDto {
 export class UserRspPlayerDto {
     id!: string;
     name!: string;
+    sign!: number;
     rspWins!: number;
     rspGames!: number;
     rspDraws!: number;

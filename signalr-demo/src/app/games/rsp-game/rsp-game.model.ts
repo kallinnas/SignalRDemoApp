@@ -2,7 +2,6 @@ import { UserRspPlayerDto } from "../../models/user.model";
 
 export interface GameStatus {
   status: 'waiting' | 'playing';
-  player?: string;
   winner?: string;
   player1?: UserRspPlayerDto;
   player2?: UserRspPlayerDto;
@@ -10,11 +9,7 @@ export interface GameStatus {
 }
 
 export interface Pending {
-  waitingFor: string;
-}
-
-export interface Disconnect {
-  waitingFor: string;
+  opponentsName: string;
 }
 
 export interface Drawn {
@@ -23,18 +18,10 @@ export interface Drawn {
 }
 
 export interface Won {
-  // constructor(public winner: string, public icoplayer1Signn: string, public player2Sign: string) { }
   winner: string;
-  // explanation: string;
-  player1Sign: string;
-  player2Sign: string;
-  // scores: string;
-}
-
-interface Output {
-  line1: string;
-  line2?: string;
-  scores?: string;
+  explanation: string;
+  player1?: UserRspPlayerDto;
+  player2?: UserRspPlayerDto;
 }
 
 export class Sign {

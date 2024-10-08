@@ -6,7 +6,8 @@ import { RspGameService } from './rsp-game.service';
 import { AppService } from '../../services/app.service';
 import { UserRspPlayerDto } from '../../models/user.model';
 
-interface Output { line1: string; line2?: string; scores?: string; }
+interface GameResult { line1: string; line2?: string; scores?: string; }
+// interface GameResult { line1: string; line2?: string; scores?: string; }
 interface Output1 { result: string; sign1?: string; sign2?: string; }
 
 @Component({
@@ -22,7 +23,7 @@ export class RspGameComponent {
   signs = Signs.getAll();
 
   @Input() game!: GameStatus;
-  output$: Observable<Output>;
+  output$: Observable<GameResult>;
 
   opponent!: UserRspPlayerDto | undefined;
   isOpponentMadeMove = signal<boolean>(false);
@@ -54,45 +55,41 @@ export class RspGameComponent {
     this.startIconAnimation();
   }
 
-  private processPending(pending: Pending): Output {
+  private processPending(pending: Pending): GameResult {
     return {
-      line1: pending.waitingFor == this.game.player ?
-        'Your opponent has chosen ...' : `Waiting for ${pending.waitingFor}`
+      line1: pending.opponentsName == this.rspGameService.playerName ?
+        'Your opponent has chosen ...' : `Waiting for ${pending.opponentsName}`
     };
   }
 
-  private processDrawn(drawn: Drawn): Output {
+  private processDrawn(drawn: Drawn): GameResult {
     this.currentThrow = '';
     this.resetAfter5Seconds();
     return { line1: 'Draw', line2: drawn.explanation, scores: drawn.scores };
   }
 
-  private processWon(won: Won): Output {
+  private processWon(won: Won): GameResult {
     this.stopIconAnimation();
-    this.disableButtons = false;
     this.currentThrow = '';
     this.isOpponentMadeMove.set(true);
     this.game.winner = won.winner;
 
-    if (won.winner == this.game.player) {
-      this.opponentChosenIcon = this.Sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
-    }
-
-    else {
-      this.opponentChosenIcon = this.Sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
+    if (won.player2 && won.player1) {
+      this.game.player1 = won.player1;
+      this.game.player2 = won.player2;
+      
+      this.opponentChosenIcon = won.winner == this.rspGameService.playerName ?
+        this.Sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2?.sign : +won.player1?.sign) :
+        this.Sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2?.sign : +won.player1?.sign);
     }
 
     this.resetAfter5Seconds();
 
     return {
-      line1: won.winner == this.game.player ? 'You won!' : `${won.winner} won.`,
-      line2: won.player1Sign,
-      scores: won.player2Sign
+      line1: won.winner == this.rspGameService.playerName ? 'You won!' : `${won.winner} won.`,
+      line2: won.player1?.sign.toString(),
+      scores: won.player2?.sign.toString()
     };
-  }
-
-  isWaitingForOpponent(): boolean {
-    return this.playerChosenIcon !== undefined;
   }
 
   throw(selection: number): void {
@@ -108,7 +105,7 @@ export class RspGameComponent {
 
   isWinnerOpponent(): boolean { return this.game?.winner != this.appService.userData.name; }
 
-  private setOpponent() { this.opponent = this.game.player1 === this.game.player ? this.game.player2 : this.game.player1; }
+  private setOpponent() { this.opponent = this.game.player1?.name === this.rspGameService.playerName ? this.game.player2 : this.game.player1; }
 
   cyclingIcons!: any;
   currentOpponentIcon: Sign = this.signs[0];
