@@ -3,27 +3,12 @@
 }
 
 button {
-    width: 80px;
-    height: 80px;
-    color: white;
+    transition: transform 0.2s;
 }
 
 button:hover {
     transform: scale(1.1);
 }
-
-.rock_btn {
-    background-color: #f44336;
-}
-
-.paper_btn {
-    background-color: #2196F3;
-}
-
-.scissors_btn {
-    background-color: #6fb20c;
-}
-
 
 // TABLE BOARDERS [START]
 .boarded {

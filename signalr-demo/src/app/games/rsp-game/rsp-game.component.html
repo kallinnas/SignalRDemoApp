@@ -1,5 +1,5 @@
 <div fxFlex fxLayout="column">
-
+    <!-- TABLE SCORE -->
     <div class="boarded" fxFlex="12%" fxLayout="column">
         <div fxFlex fxLayout="row">
             <div fxFlex fxLayoutAlign="center center">{{ getPlayerName() }}</div>
@@ -19,13 +19,15 @@
         </div>
     </div>
 
+    <!-- ACTIONS DISPLAY -->
     <div fxFlex="45%" fxLayoutAlign="space-between center">
         <div class="result" fxFlex fxLayoutAlign="center center">
-            <ng-container *ngIf="playerChosenIcon">
+            <div *ngIf="playerChosenIcon" [ngStyle]="playerChosenIcon.styles" fxLayoutAlign="center center">
                 <i [class]="playerChosenIcon.icon"></i>
-            </ng-container>
+            </div>
         </div>
 
+        <!-- SPINNER & STATE HINTS -->
         <div *ngIf="!isOpponentMadeMove()" fxLayout="column" fxLayoutAlign="center center">
             <mat-spinner></mat-spinner>
             <p *ngIf="!playerChosenIcon">Waiting for your move...</p>
@@ -34,29 +36,29 @@
 
         <p *ngIf="game?.winner && isWinnerOpponent()">Loses</p>
         <p *ngIf="game?.winner && !isWinnerOpponent()">Beats</p>
-
+        
+        <!-- DISPLAY SIGN ICONS IN A LOOP TILL WINNER APPEARS -->
         <div class="result" fxFlex fxLayoutAlign="center center">
-            <ng-container *ngIf="isOpponentMadeMove()">
-                <i [class]="opponentChosenIcon.icon"></i>
-            </ng-container>
+            <div *ngIf="isOpponentMadeMove(); else cyclingIcons" [ngStyle]="opponentChosenIcon?.styles">
+                <i [class]="opponentChosenIcon?.icon"></i>
+            </div>
+            <ng-template #cyclingIcons>
+                <div [ngStyle]="currentOpponentIcon.styles">
+                    <i [class]="currentOpponentIcon.icon"></i>
+                </div>
+            </ng-template>
         </div>
     </div>
 
+    <!-- DYNAMIC BUTTON -->
     <div fxFlex="28%" fxLayoutAlign="center center" fxLayoutGap="40px">
-
-        <button mat-fab color="primary" class="rock_btn" (click)="throw(sign.Rock.value)">
-            <i class="{{sign.Rock.icon}}"></i>
-        </button>
-
-        <button mat-fab color="primary" class="paper_btn" (click)="throw(sign.Paper.value)">
-            <i class="{{sign.Paper.icon}}"></i>
-        </button>
-
-        <button mat-fab color="primary" class="scissors_btn" (click)="throw(sign.Scissors.value)">
-            <i class="{{sign.Scissors.icon}}"></i>
+        <button mat-fab *ngFor="let sign of signs" [disabled]="isWaitingForOpponent()" (click)="throw(sign.value)"
+            [ngStyle]="sign.styles">
+            <i class="{{ sign.icon }}"></i>
         </button>
     </div>
 
+    <!-- INFO FIELD -->
     <div fxFlex="15%" class="message-section" fxLayout="column" fxLayoutAlign="start center">
         <div class="message-content" fxLayout="column">
             <p *ngIf="(output$ | async)?.line1">{{(output$ | async)?.line1}}</p>

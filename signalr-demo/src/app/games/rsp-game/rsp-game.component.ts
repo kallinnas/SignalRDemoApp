@@ -1,7 +1,7 @@
 import { Component, Input, signal } from '@angular/core';
 import { GeneralModule } from '../../modules/general.model';
-import { map, Observable } from 'rxjs';
-import { GameStatus, Pending, Drawn, Won, Signs } from './rsp-game.model';
+import { interval, map, Observable, Subscription } from 'rxjs';
+import { GameStatus, Pending, Drawn, Won, Signs, Sign } from './rsp-game.model';
 import { RspGameService } from './rsp-game.service';
 import { AppService } from '../../services/app.service';
 import { UserRspPlayerDto } from '../../models/user.model';
@@ -19,12 +19,14 @@ interface Output1 { result: string; sign1?: string; sign2?: string; }
 export class RspGameComponent {
 
   sign = Signs;
+  signs = Signs.getAll();
 
   @Input() game!: GameStatus;
   output$: Observable<Output>;
 
   opponent!: UserRspPlayerDto | undefined;
   isOpponentMadeMove = signal<boolean>(false);
+  disableButtons = false;
 
   displayedColumns = ['Wins', 'Loses', 'Draws'];
   playerChosenIcon!: any;
@@ -49,8 +51,7 @@ export class RspGameComponent {
 
   ngOnInit(): void {
     this.setOpponent();
-    console.log(this.opponent);
-    
+    this.startIconAnimation();
   }
 
   private processPending(pending: Pending): Output {
@@ -62,31 +63,26 @@ export class RspGameComponent {
 
   private processDrawn(drawn: Drawn): Output {
     this.currentThrow = '';
-
+    this.resetAfter5Seconds();
     return { line1: 'Draw', line2: drawn.explanation, scores: drawn.scores };
   }
 
-  // private processWon(won: Won): Output {
-  //   this.currentThrow = '';
-
-  //   return { line1: won.winner == this.game.thisPlayer ? 'You won!' : `${won.winner} won.`, line2: won.explanation, scores: won.scores };
-  // }
-
   private processWon(won: Won): Output {
+    this.stopIconAnimation();
+    this.disableButtons = false;
     this.currentThrow = '';
     this.isOpponentMadeMove.set(true);
     this.game.winner = won.winner;
-console.log(won);
 
     if (won.winner == this.game.player) {
-      // this.playerChosenIcon = this.sign.getByValue(+won.player1Sign);
-      this.opponentChosenIcon = this.sign.getByValue(+won.player2Sign);
+      this.opponentChosenIcon = this.sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
     }
 
     else {
-      // this.playerChosenIcon = this.sign.getByValue(+won.player2Sign);
-      this.opponentChosenIcon = this.sign.getByValue(+won.player1Sign);
+      this.opponentChosenIcon = this.sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
     }
+
+    this.resetAfter5Seconds();
 
     return {
       line1: won.winner == this.game.player ? 'You won!' : `${won.winner} won.`,
@@ -95,10 +91,16 @@ console.log(won);
     };
   }
 
+  isWaitingForOpponent(): boolean {
+    // Waiting for opponent if the player has chosen their move but opponent hasn't made a move yet
+    return this.playerChosenIcon !== undefined && !this.isOpponentMadeMove();
+  }
+
   throw(selection: number): void {
     this.playerChosenIcon = this.sign.getByValue(selection);
     this.currentThrow = this.playerChosenIcon.sign;
     this.rspGameService.throw(this.game.group!, this.currentThrow);
+    this.disableButtons = true;
   }
 
   getPlayerName() { return this.game.player1?.name === this.appService.userData.name ? this.game.player1?.name : this.game.player2?.name; }
@@ -108,5 +110,32 @@ console.log(won);
   isWinnerOpponent(): boolean { return this.game?.winner != this.appService.userData.name; }
 
   private setOpponent() { this.opponent = this.game.player1 === this.game.player ? this.game.player2 : this.game.player1; }
+
+  cyclingIcons!: any;
+  currentOpponentIcon: Sign = this.signs[0];
+
+  private startIconAnimation() {
+    let index = 0;
+    this.cyclingIcons = setInterval(() => {
+      this.currentOpponentIcon = this.signs[index];
+      index = (index + 1) % this.signs.length;
+    }, 330);
+  }
+
+  private stopIconAnimation() {
+    clearInterval(this.cyclingIcons);
+  }
+
+  private resetAfter5Seconds() {
+    setTimeout(() => {
+      this.isOpponentMadeMove.set(false);
+      this.playerChosenIcon = undefined;
+      this.opponentChosenIcon = undefined;
+      this.game.winner = undefined;
+      this.disableButtons = false;
+      this.startIconAnimation();
+    }, 5000);
+  }
+
 }
 

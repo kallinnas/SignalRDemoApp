@@ -12,6 +12,7 @@ export class RspGameService {
 
   private connection?: SignalrConnection;
   private playerName = "";
+  isFirstPlayer: boolean = false;
 
   waitingUser = signal<UserRspPlayerDto | null>(null);
 
@@ -40,7 +41,10 @@ export class RspGameService {
     let waitingForPlayer$ = connection.on<[]>('WaitingForPlayer')
       .pipe(
         map(() => ({ status: 'waiting' } as GameStatus)),
-        tap(() => console.log('onWaitingForPlayer')));
+        tap(() => {
+          console.log('onWaitingForPlayer');
+          this.isFirstPlayer = true;
+        }));
 
     let gameStarted$ = connection.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
       .pipe(
@@ -70,7 +74,7 @@ export class RspGameService {
 
     let won$ = connection.on<[string, string, string]>('Won')
       .pipe(map(([winner, player1Sign, player2Sign]) => ({ winner, player1Sign, player2Sign } as Won)));
-      // .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
+    // .pipe(map(([winner, explanation, scores]) => ({ winner, explanation, scores } as Won)));
 
     this.outcome$ = merge(
       pending$.pipe(map(value => ({ type: 'pending', value }))),

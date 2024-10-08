@@ -15,6 +15,7 @@ export class LogoutService {
 
   logout(): void {
     console.log('#8 logout: invoke');
+    this.logoutListenResponse();
 
     this.signalrService.hubConnection.invoke(this.methodName, this.appService.userData.id)
       .then(() => {

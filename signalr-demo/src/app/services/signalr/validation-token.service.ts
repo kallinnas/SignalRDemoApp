@@ -46,8 +46,11 @@ export class ValidationTokenService {
         this.appService.isAuthenticated.set(true);
 
         this.appService.toastr.success('Re-authentificated!');
-        this.appService.router.navigate(["account"]);
-        
+
+        if (this.appService.router.url === '/auth') {
+          this.appService.router.navigate(["account"]);
+        } else this.appService.router.navigate([this.appService.router.url]);
+
         this.signalrService.offConnection([this.successCommand, this.failCommand]);
       });
     }

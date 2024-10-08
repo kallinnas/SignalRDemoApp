@@ -14,31 +14,20 @@ export class LoginService {
   ) { }
 
   checkAuthentication(): void {
-    if (typeof window !== 'undefined') {
-      this.launchHub();
-    }
+    if (typeof window === 'undefined') return;
+
+    this.signalrService.startConnection()
+      .then(() => {
+        const token = this.appService.getToken();
+
+        if (this.signalrService.hasConnection() && token) {
+          console.log('#1 Has token');
+          this.validationTokenService.launchValidationToken();
+        }
+
+        else { console.error('SignalR connection not established or no token.'); }
+      })
+      .catch(err => console.error('Error starting SignalR connection:', err));
   }
 
-  launchHub() {
-    try {
-      this.signalrService.startConnection()
-        .then(() => {
-          const token = this.appService.getToken();
-
-          if (this.signalrService.hasConnection()) {
-            if (token) {
-              console.log('#1 Has token');
-              this.validationTokenService.launchValidationToken();
-            }
-          }
-
-          else { console.error('SignalR connection is not connected.'); }
-        })
-
-        .catch((err: any) => { console.error('Error starting SignalR connection:', err); });
-    }
-
-    catch (err) { console.log(err); }
-  }
-  
 }
