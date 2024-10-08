@@ -42,7 +42,8 @@ export class Sign {
 }
 
 export class Signs {
-  private static readonly commonStyles = { width: '80px', height: '80px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '80%', };
+  private static readonly commonStyles = { width: '80px', height: '80px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '90%', };
+  static readonly noStyles = { width: '70px', height: '70px', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '90%', backgroundColor: 'black'};
 
   static readonly Rock = new Sign(0, 'fa-regular fa-hand-back-fist fa-4x', 'Rock', { ...Signs.commonStyles, backgroundColor: '#f44336' });
   static readonly Paper = new Sign(1, 'fa-regular fa-hand fa-4x', 'Paper', { ...Signs.commonStyles, backgroundColor: '#2196F3' });

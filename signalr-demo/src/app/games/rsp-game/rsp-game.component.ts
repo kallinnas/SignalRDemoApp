@@ -1,6 +1,6 @@
 import { Component, Input, signal } from '@angular/core';
 import { GeneralModule } from '../../modules/general.model';
-import { interval, map, Observable, Subscription } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { GameStatus, Pending, Drawn, Won, Signs, Sign } from './rsp-game.model';
 import { RspGameService } from './rsp-game.service';
 import { AppService } from '../../services/app.service';
@@ -18,7 +18,7 @@ interface Output1 { result: string; sign1?: string; sign2?: string; }
 })
 export class RspGameComponent {
 
-  sign = Signs;
+  Sign = Signs;
   signs = Signs.getAll();
 
   @Input() game!: GameStatus;
@@ -75,11 +75,11 @@ export class RspGameComponent {
     this.game.winner = won.winner;
 
     if (won.winner == this.game.player) {
-      this.opponentChosenIcon = this.sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
+      this.opponentChosenIcon = this.Sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
     }
 
     else {
-      this.opponentChosenIcon = this.sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
+      this.opponentChosenIcon = this.Sign.getByValue(this.rspGameService.isFirstPlayer ? +won.player2Sign : +won.player1Sign);
     }
 
     this.resetAfter5Seconds();
@@ -92,12 +92,11 @@ export class RspGameComponent {
   }
 
   isWaitingForOpponent(): boolean {
-    // Waiting for opponent if the player has chosen their move but opponent hasn't made a move yet
-    return this.playerChosenIcon !== undefined && !this.isOpponentMadeMove();
+    return this.playerChosenIcon !== undefined;
   }
 
   throw(selection: number): void {
-    this.playerChosenIcon = this.sign.getByValue(selection);
+    this.playerChosenIcon = this.Sign.getByValue(selection);
     this.currentThrow = this.playerChosenIcon.sign;
     this.rspGameService.throw(this.game.group!, this.currentThrow);
     this.disableButtons = true;

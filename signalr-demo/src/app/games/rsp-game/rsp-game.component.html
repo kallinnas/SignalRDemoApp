@@ -52,8 +52,8 @@
 
     <!-- DYNAMIC BUTTON -->
     <div fxFlex="28%" fxLayoutAlign="center center" fxLayoutGap="40px">
-        <button mat-fab *ngFor="let sign of signs" [disabled]="isWaitingForOpponent()" (click)="throw(sign.value)"
-            [ngStyle]="sign.styles">
+        <button mat-fab *ngFor="let sign of signs" [disabled]="this.playerChosenIcon" (click)="throw(sign.value)"
+            [ngStyle]="!this.playerChosenIcon ? sign.styles : Sign.noStyles">
             <i class="{{ sign.icon }}"></i>
         </button>
     </div>
