@@ -10,12 +10,12 @@
             <div fxFlex fxLayoutAlign="center center" *ngFor="let column of displayedColumns">{{ column }}</div>
         </div>
         <div fxFlex fxLayout="row">
-            <div fxFlex fxLayoutAlign="center center">{{ game.player1?.rspWins }}</div>
-            <div fxFlex fxLayoutAlign="center center">{{ game.player1?.rspGames }}</div>
-            <div fxFlex fxLayoutAlign="center center">{{ game.player1?.rspDraws }}</div>
-            <div fxFlex fxLayoutAlign="center center">{{ game.player2?.rspWins }}</div>
-            <div fxFlex fxLayoutAlign="center center">{{ game.player2?.rspGames }}</div>
-            <div fxFlex fxLayoutAlign="center center">{{ game.player2?.rspDraws }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerWins(false) }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerLoses(false) }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerDraws(false) }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerWins(true) }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerLoses(true) }}</div>
+            <div fxFlex fxLayoutAlign="center center">{{ getPlayerDraws(true) }}</div>
         </div>
     </div>
 
@@ -30,13 +30,14 @@
         <!-- SPINNER & STATE HINTS -->
         <div *ngIf="!isOpponentMadeMove()" fxLayout="column" fxLayoutAlign="center center">
             <mat-spinner></mat-spinner>
+            <p *ngIf="(output$ | async)?.displayIcons">{{(output$ | async)?.displayIcons}}</p>
             <p *ngIf="!playerChosenIcon">Waiting for your move...</p>
             <p *ngIf="playerChosenIcon">Waiting for opponent move...</p>
         </div>
 
         <p *ngIf="game?.winner && isWinnerOpponent()">Loses</p>
         <p *ngIf="game?.winner && !isWinnerOpponent()">Beats</p>
-        
+
         <!-- DISPLAY SIGN ICONS IN A LOOP TILL WINNER APPEARS -->
         <div class="result" fxFlex fxLayoutAlign="center center">
             <div *ngIf="isOpponentMadeMove(); else cyclingIcons" [ngStyle]="opponentChosenIcon?.styles">
@@ -61,9 +62,9 @@
     <!-- INFO FIELD -->
     <div fxFlex="15%" class="message-section" fxLayout="column" fxLayoutAlign="start center">
         <div class="message-content" fxLayout="column">
-            <p *ngIf="(output$ | async)?.line1">{{(output$ | async)?.line1}}</p>
-            <p *ngIf="(output$ | async)?.line2">{{(output$ | async)?.line2}}</p>
-            <p *ngIf="(output$ | async)?.scores">{{(output$ | async)?.scores}}</p>
+            <!-- <p *ngIf="(output$ | async)?.displayIcons">{{(output$ | async)?.displayIcons}}</p> -->
+            <p *ngIf="(output$ | async)?.winnerState">{{(output$ | async)?.winnerState}}</p>
+            <!-- <p *ngIf="(output$ | async)?.scores">{{(output$ | async)?.scores}}</p> -->
         </div>
     </div>
 </div>

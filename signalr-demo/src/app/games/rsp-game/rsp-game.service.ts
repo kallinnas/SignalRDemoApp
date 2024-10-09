@@ -2,7 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, map, merge, startWith, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { GameStatus, Pending, Drawn, Won } from './rsp-game.model';
+import { GameStatus, Drawn, Won } from './rsp-game.model';
 import { SignalrClient, SignalrConnection } from 'ngx-signalr-websocket';
 import { AppService } from '../../services/app.service';
 import { UserRspPlayerDto } from '../../models/user.model';
@@ -17,7 +17,7 @@ export class RspGameService {
   waitingUser = signal<UserRspPlayerDto | null>(null);
 
   status$?: Observable<GameStatus>;
-  outcome$?: Observable<{ type: string, value: Pending | Drawn | Won }>;
+  outcome$?: Observable<{ type: string, value: Drawn | Won }>;
 
   constructor(
     private httpClient: HttpClient,
@@ -59,10 +59,7 @@ export class RspGameService {
   }
 
   private setupOutcomePipe(connection: SignalrConnection): void {
-    console.log('#2 setupOutcomePipe: Pending / Drawn / Won = outcome$');
-
-    let pending$ = connection.on<[string]>('Pending')// waitingForOpponentsName displays opponents name during his Throw
-      .pipe(map(([waitingForOpponentsName]) => ({ opponentsName: waitingForOpponentsName } as Pending)));
+    console.log('#2 setupOutcomePipe: Drawn / Won = outcome$');
 
     let drawn$ = connection.on<[string, string]>('Drawn')
       .pipe(map(([explanation, scores]) => ({ explanation, scores } as Drawn)));
@@ -71,7 +68,6 @@ export class RspGameService {
       .pipe(map(([winner, explanation, player1, player2]) => ({ winner, explanation, player1, player2 } as Won)));
 
     this.outcome$ = merge(
-      pending$.pipe(map(value => ({ type: 'pending', value }))),
       drawn$.pipe(map(value => ({ type: 'drawn', value }))),
       won$.pipe(map(value => ({ type: 'won', value }))));
   }
