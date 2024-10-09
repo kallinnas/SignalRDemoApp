@@ -17,7 +17,7 @@
         <div fxLayout fxLayoutGap="10px">
             <button mat-button *ngIf="appService.isAdminUser()" routerLink="/user-connection-state">{{connBtn}}
             </button>
-            <button mat-button routerLink="/game-manager">{{rspBtn}}</button>
+            <button mat-button *ngIf="isAuthenticated()" routerLink="/game-manager">{{rspBtn}}</button>
             <button mat-button *ngIf="!isAuthenticated() && !isRegisterMode()" (click)="onAccessMode()">SignUp</button>
             <button mat-button *ngIf="!isAuthenticated() && isRegisterMode()" (click)="onAccessMode()">Login</button>
             <button mat-button *ngIf="isAuthenticated()" (click)="onLogout()">Logout</button>
