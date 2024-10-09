@@ -4,7 +4,7 @@ namespace SignalRDemo.Services.Interfaces;
 
 public interface IGameService
 {
-    Task UpdateGameResultAsync(Guid player1Id, Guid player2Id, bool? isWinner);
+    Task<(UserRspPlayerDto?, UserRspPlayerDto?)> UpdateGameResultAsync(UserRspPlayerDto player1, UserRspPlayerDto player2, bool? isWinnerFirstPlayer);
     Task<User?> GetByIdAsync(Guid id);
     Task<UserRspPlayerDto?> GetUserRspPlayerAsync(Guid id);
 }

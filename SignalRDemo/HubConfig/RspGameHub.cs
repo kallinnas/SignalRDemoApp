@@ -73,14 +73,14 @@ public class RspGameHub : Hub
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
 
             if (game.Pending) // Returns opponentsName and reports to first-move player about Pending state 
-            { await Clients.Group(groupName).SendAsync("Pending", game.WaitingForOpponentsName); }
+            { await Clients.Group(groupName).SendAsync("Pending"); }
 
             else
             {   // Gets players to define a winner due Beats Sign schema
                 var (player1, player2) = _manager.GetGroupGamePlayers(groupName);
-                var isWinner = Signs.Beats(player1.Sign!.Value, player2.Sign!.Value);
+                var isWinnerFirstPlayer = Signs.Beats(player1.Sign!.Value, player2.Sign!.Value);
 
-                await _gameService.UpdateGameResultAsync(player1.Id, player2.Id, isWinner);
+                (player1, player2) = await _gameService.UpdateGameResultAsync(player1!, player2, isWinnerFirstPlayer);
 
                 var winner = game.Winner;
 

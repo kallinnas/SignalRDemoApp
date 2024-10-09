@@ -56,13 +56,13 @@ public class UserRspPlayerDto
     public int RspDraws { get; set; }
 
     public UserRspPlayerDto(string name) => Name = name;
-    public UserRspPlayerDto(Guid id, string name, int rockPaperScissorsWinAmount, int rockPaperScissorsGameAmount, int rockPaperScissorsDrawAmount)
+    public UserRspPlayerDto(Guid id, string name, int rspWins, int rspGames, int rspDraws)
     {
         Id = id;
         Name = name;
-        RspWins = rockPaperScissorsWinAmount;
-        RspGames = rockPaperScissorsGameAmount;
-        RspDraws = rockPaperScissorsDrawAmount;
+        RspWins = rspWins;
+        RspGames = rspGames;
+        RspDraws = rspDraws;
     }
 }
 

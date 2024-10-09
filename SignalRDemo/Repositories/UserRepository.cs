@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MySqlConnector;
 using SignalRDemo.Data;
 using SignalRDemo.Models;
 using SignalRDemo.Repositories.Interfaces;
@@ -21,5 +22,21 @@ public class UserRepository : IUserRepository
             .FirstOrDefaultAsync();
     }
 
-    public async Task UpdateContext() { await _context.SaveChangesAsync(); }
+    public async Task<UserRspPlayerDto?> UpdatePlayersResultAsync(Guid playerId, bool? isWinner)
+    {
+        string query = @"
+        UPDATE Users 
+        SET RspGames = RspGames + 1, 
+            RspWins = CASE WHEN @isWinner = 1 THEN RspWins + 1 ELSE RspWins END,
+            RspDraws = CASE WHEN @isWinner IS NULL THEN RspDraws + 1 ELSE RspDraws END
+        WHERE Id = @playerId";
+
+        await _context.Database.ExecuteSqlRawAsync(query,
+            new MySqlParameter("@isWinner", isWinner.HasValue ? (isWinner.Value ? 1 : 0) : DBNull.Value),
+            new MySqlParameter("@playerId", playerId));
+
+        await _context.SaveChangesAsync();
+
+        return await GetUserRspPlayerAsync(playerId);
+    }
 }

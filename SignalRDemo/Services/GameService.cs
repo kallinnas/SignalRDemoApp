@@ -10,29 +10,15 @@ public class GameService : IGameService
 
     public GameService(IUserRepository userRepository) { _userRepository = userRepository; }
 
-    public async Task UpdateGameResultAsync(Guid player1Id, Guid player2Id, bool? isWinner)
+    public async Task<(UserRspPlayerDto?, UserRspPlayerDto?)> UpdateGameResultAsync(UserRspPlayerDto player1, UserRspPlayerDto player2, bool? isWinnerFirstPlayer)
     {
-        var player1 = await _userRepository.GetUserRspPlayerAsync(player1Id);
-        var player2 = await _userRepository.GetUserRspPlayerAsync(player2Id);
+        var updatePlayer1 = await _userRepository.UpdatePlayersResultAsync(player1.Id, isWinnerFirstPlayer);
+        var updatePlayer2 = await _userRepository.UpdatePlayersResultAsync(player2.Id, !isWinnerFirstPlayer);
 
-        if (player1 == null || player2 == null) { throw new Exception("Players not found."); }
+        updatePlayer1!.Sign = player1.Sign;
+        updatePlayer2!.Sign = player2.Sign;
 
-        player1.RspGames++;
-        player2.RspGames++;
-
-        if (isWinner != null)
-        {
-            if ((bool)isWinner) { player1.RspWins++; }
-            else { player2.RspWins++; }
-        }
-
-        else
-        {
-            player1.RspDraws++;
-            player2.RspDraws++;
-        }
-
-        await _userRepository.UpdateContext();
+        return (updatePlayer1, updatePlayer2);
     }
 
     public async Task<User?> GetByIdAsync(Guid id) { return await _userRepository.GetByIdAsync(id); }
