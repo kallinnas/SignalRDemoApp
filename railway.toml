@@ -1,0 +1,9 @@
+# Backend service for SignalRDemo (ASP.NET Core)
+[service.signalr-server]
+build = "cd SignalRDemo && dotnet publish -c Release"
+start = "cd SignalRDemo && dotnet run"
+
+# Frontend service for Angular UI (signalr-demo)
+[service.angular-ui]
+build = "cd signalr-demo && npm install && npm run build"
+start = "cd signalr-demo && npm start"
