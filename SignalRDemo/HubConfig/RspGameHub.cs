@@ -85,7 +85,7 @@ public class RspGameHub : Hub
                 var winner = game.Winner;
 
                 if (winner == null)
-                { await Clients.Group(groupName).SendAsync("Drawn", game.Explanation, game.Scores); }
+                { await Clients.Group(groupName).SendAsync("Drawn", game.Explanation, player1, player2); }
 
                 else
                 { await Clients.Group(groupName).SendAsync("Won", winner, game.Explanation, player1, player2); }

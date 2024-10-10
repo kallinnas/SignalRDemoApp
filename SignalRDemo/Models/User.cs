@@ -34,8 +34,7 @@ public class UserSignalrDto
     public Guid Id { get; set; }
     public string Name { get; set; } = null!;
     public string SignalrId { get; set; }
-    public string Token { get; set; }
-    public UserSignalrDto() { }
+    public string? Token { get; set; }
     public UserSignalrDto(Guid id, string name, string signalrId)
     {
         Id = id; Name = name; SignalrId = signalrId;
@@ -49,20 +48,15 @@ public class UserSignalrDto
 public class UserRspPlayerDto
 {
     public Guid Id { get; set; }
-    public string Name { get; }
+    public string? Name { get; }
     public Sign? Sign { get; set; }
     public int RspWins { get; set; }
     public int RspGames { get; set; }
     public int RspDraws { get; set; }
 
-    public UserRspPlayerDto(string name) => Name = name;
     public UserRspPlayerDto(Guid id, string name, int rspWins, int rspGames, int rspDraws)
     {
-        Id = id;
-        Name = name;
-        RspWins = rspWins;
-        RspGames = rspGames;
-        RspDraws = rspDraws;
+        Id = id; Name = name; RspWins = rspWins; RspGames = rspGames; RspDraws = rspDraws;
     }
 }
 
