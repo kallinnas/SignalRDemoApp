@@ -9,26 +9,26 @@ FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
 
 # Copy only the project file first (replace with your actual project file name)
-COPY ["YourProjectName/YourProjectName.csproj", "YourProjectName/"]
+COPY ["SignalRDemoApp/SignalRDemoApp.csproj", "SignalRDemoApp/"]
 
 # Restore the dependencies
-RUN dotnet restore "YourProjectName/YourProjectName.csproj"
+RUN dotnet restore "SignalRDemoApp/SignalRDemoApp.csproj"
 
 # Copy the rest of the application files
 COPY . .
 
 # Set the working directory to the project folder
-WORKDIR "/src/YourProjectName"
+WORKDIR "/src/SignalRDemoApp"
 
 # Build the project
-RUN dotnet build "YourProjectName.csproj" -c Release -o /app/build
+RUN dotnet build "SignalRDemoApp.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "YourProjectName.csproj" -c Release -o /app/publish
+RUN dotnet publish "SignalRDemoApp.csproj" -c Release -o /app/publish
 
 # Use the base image again for the final step
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
 
-ENTRYPOINT ["dotnet", "YourProjectName.dll"]
+ENTRYPOINT ["dotnet", "SignalRDemoApp.dll"]
