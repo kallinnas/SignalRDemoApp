@@ -61,8 +61,8 @@ export class RspGameService {
   private setupOutcomePipe(connection: SignalrConnection): void {
     console.log('#2 setupOutcomePipe: Drawn / Won = outcome$');
 
-    let drawn$ = connection.on<[string, string]>('Drawn')
-      .pipe(map(([explanation, scores]) => ({ explanation, scores } as Drawn)));
+    let drawn$ = connection.on<[string, UserRspPlayerDto, UserRspPlayerDto]>('Drawn')
+      .pipe(map(([explanation, player1, player2]) => ({ explanation, player1, player2 } as Drawn)));
 
     let won$ = connection.on<[string, string, UserRspPlayerDto, UserRspPlayerDto]>('Won')
       .pipe(map(([winner, explanation, player1, player2]) => ({ winner, explanation, player1, player2 } as Won)));

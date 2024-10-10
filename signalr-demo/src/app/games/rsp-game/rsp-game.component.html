@@ -30,13 +30,11 @@
         <!-- SPINNER & STATE HINTS -->
         <div *ngIf="!isOpponentMadeMove()" fxLayout="column" fxLayoutAlign="center center">
             <mat-spinner></mat-spinner>
-            <p *ngIf="(output$ | async)?.displayIcons">{{(output$ | async)?.displayIcons}}</p>
             <p *ngIf="!playerChosenIcon">Waiting for your move...</p>
             <p *ngIf="playerChosenIcon">Waiting for opponent move...</p>
         </div>
-
-        <p *ngIf="game?.winner && isWinnerOpponent()">Loses</p>
-        <p *ngIf="game?.winner && !isWinnerOpponent()">Beats</p>
+        
+        <p *ngIf="(output$ | async)?.displayIcons">{{(output$ | async)?.displayIcons}}</p>
 
         <!-- DISPLAY SIGN ICONS IN A LOOP TILL WINNER APPEARS -->
         <div class="result" fxFlex fxLayoutAlign="center center">
