@@ -45,6 +45,7 @@ using (var scope = app.Services.CreateScope())
     dbContext.Database.Migrate();
 }
 
+app.UseStaticFiles(); // Ensures .NET serves files from wwwroot 
 app.UseRouting(); // before UseAuthorization()
 
 app.UseHttpsRedirection();
@@ -59,6 +60,8 @@ app.UseEndpoints(endpoints =>
     endpoints.MapHub<ConnectionHub>("/ConnectionHub");
     endpoints.MapHub<RspGameHub>("/RspGameHub");
 });
+
+app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html
 
 app.Run();
 
