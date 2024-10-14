@@ -15,7 +15,8 @@ builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => po
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
 
 // Configure DbContext with MySQL
-var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+var connectionString = builder.Configuration.GetConnectionString("MySqlProd");
+//var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
 
 // Default container services.
@@ -35,6 +36,13 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
+
+// Ensure Migrations on Railway
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate();
 }
 
 app.UseRouting(); // before UseAuthorization()

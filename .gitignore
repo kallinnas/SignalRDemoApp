@@ -6,3 +6,5 @@ SignalRDemo/.vs/
 signalr-demo/public/favicon.ico
 signalr-demo/.vscode/
 person connection models.sql
+/signalr-demo/dist/signalr-demo
+/SignalRDemo/wwwroot/dist/signalr-demo

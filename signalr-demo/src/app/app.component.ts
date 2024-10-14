@@ -23,11 +23,6 @@ export class AppComponent implements OnInit {
     private loginService: LoginService,
     public appService: AppService,
   ) {
-    effect(() => {
-      if (this.isAuthenticated()) {
-        this.logoutService.logoutListenResponse();
-      }
-    });
   }
 
   ngOnInit(): void {
