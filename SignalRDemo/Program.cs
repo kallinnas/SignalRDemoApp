@@ -51,12 +51,12 @@ app.UseRouting(); // before UseAuthorization()
 app.UseHttpsRedirection();
 app.UseAuthorization();
 
-
 app.UseCors("CorsPolicy");
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
+    endpoints.MapFallbackToFile("index.html"); // For Angular single-page application
     endpoints.MapHub<ConnectionHub>("/ConnectionHub");
     endpoints.MapHub<RspGameHub>("/RspGameHub");
 });

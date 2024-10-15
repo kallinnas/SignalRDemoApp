@@ -9,16 +9,26 @@
     }
   },
   "profiles": {
+    //"SignalRDemo": {
+    //  "commandName": "Project",
+    //  "dotnetRunMessages": true,
+    //  "launchBrowser": false,
+    //  "launchUrl": "swagger",
+    //  "applicationUrl": "https://localhost:7217;http://localhost:5063",
+    //  "environmentVariables": {
+    //    "ASPNETCORE_ENVIRONMENT": "Development"
+    //  }
+    //},
+
     "SignalRDemo": {
       "commandName": "Project",
-      "dotnetRunMessages": true,
-      "launchBrowser": false,
-      "launchUrl": "swagger",
-      "applicationUrl": "https://localhost:7217;http://localhost:5063",
+      "launchBrowser": true,
+      "launchUrl": "api/your-default-endpoint", // Ensure the correct API endpoint
       "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development"
+        "ASPNETCORE_ENVIRONMENT": "Production"
       }
     }
+
     //"IIS Express": {
     //  "commandName": "IISExpress",
     //  "launchBrowser": true,
