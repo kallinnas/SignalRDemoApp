@@ -1,5 +1,5 @@
 ﻿# 1. Use Node image to build Angular app
-FROM node:16 AS angular-build
+FROM node:18 AS angular-build
 WORKDIR /app/signalr-demo
 COPY ./signalr-demo .  # Copy only the Angular frontend folder
 RUN npm install
