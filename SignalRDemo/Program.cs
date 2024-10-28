@@ -18,10 +18,10 @@ builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
 
-var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
-builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
+//var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+//builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
 // MySQL Db
-//builder.Services.AddMySqlDatabase(builder.Configuration);
+builder.Services.AddMySqlDatabase(builder.Configuration);
 builder.Services.AddScoped<JwtService>();
 
 // Default container services.
@@ -42,11 +42,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Apply pending migrations (for railway migration db)
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.Migrate(); // Apply any pending migrations
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    dbContext.Database.Migrate(); // Apply any pending migrations
+//}
 
 app.UseCors("AllowAllHeaders");
 
