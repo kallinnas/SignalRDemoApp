@@ -1,29 +1,31 @@
-﻿# Use official .NET SDK for building the app
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
+﻿# 1. Use Node image to build Angular app
+FROM node:16 AS angular-build
+WORKDIR /app/signalr-demo
+COPY ./signalr-demo .
+RUN npm install
+RUN npm run build --prod  # builds to /app/signalr-demo/dist
+
+# 2. Use .NET SDK image to build the backend
+FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
 WORKDIR /app
+COPY . .  # Copy the entire solution into the container
 
-# Install dotnet-ef tool
-RUN dotnet tool install --global dotnet-ef
-ENV PATH="$PATH:/root/.dotnet/tools"
+# Copy Angular dist folder to .NET backend wwwroot
+RUN rm -rf /app/SignalRDemo/wwwroot/*
+COPY --from=angular-build /app/signalr-demo/dist /app/SignalRDemo/wwwroot
 
-# Copy everything
-COPY . ./
-
-# Restore dependencies
+# Navigate to backend project folder, restore dependencies, and publish
+WORKDIR /app/SignalRDemo
 RUN dotnet restore
+RUN dotnet publish -c Release -o out
 
-# Build the application
-RUN dotnet publish -c Release -o out --no-restore
-
-# Use official .NET runtime for running the app
+# 3. Build runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS runtime
 WORKDIR /app
+COPY --from=backend-build /app/SignalRDemo/out .
 
-# Copy the published files from the build step
-COPY --from=build /app/out ./
+# Expose port 80 for HTTP
+EXPOSE 80
 
-# Expose port
-EXPOSE 80 443
-
-# Run the application
+# Set the entry point to run the backend app
 ENTRYPOINT ["dotnet", "SignalRDemo.dll"]
