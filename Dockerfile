@@ -11,7 +11,7 @@ WORKDIR /app
 
 # Copy backend files and solution file
 COPY ./SignalRDemo ./SignalRDemo
-COPY ./SignalRDemo.sln ./SignalRDemo.sln  # Reference the correct solution file
+COPY ./SignalRDemo/SignalRDemo.sln ./SignalRDemo.sln  # Corrected to the actual solution file location
 
 # Copy Angular dist to .NET backend's wwwroot
 RUN rm -rf /app/SignalRDemo/wwwroot/*
