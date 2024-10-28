@@ -1,23 +1,28 @@
-using Microsoft.EntityFrameworkCore;
-using SignalRDemo.Data;
 using SignalRDemo.HubConfig;
 using SignalRDemo.Repositories.Interfaces;
 using SignalRDemo.Repositories;
 using SignalRDemo.Services;
 using SignalRDemo.Services.Interfaces;
+using SignalRDemo.Extensions;
+using Microsoft.EntityFrameworkCore;
+using SignalRDemo.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()));
+builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
+{ builder.WithOrigins("https://mainportfolio-production-8e90.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+//{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+//builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())); // before railway
 
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
 
-// Configure DbContext with MySQL
-var connectionString = builder.Configuration.GetConnectionString("MySqlProd");
-//var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
+var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
+// MySQL Db
+//builder.Services.AddMySqlDatabase(builder.Configuration);
+builder.Services.AddScoped<JwtService>();
 
 // Default container services.
 builder.Services.AddControllers();
@@ -26,8 +31,6 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IGameService, GameService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
-
-builder.Services.AddScoped<JwtService>();
 
 var app = builder.Build();
 
@@ -38,30 +41,30 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Ensure Migrations on Railway
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.Migrate();
-}
+// Apply pending migrations (for railway migration db)
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+//    dbContext.Database.Migrate(); // Apply any pending migrations
+//}
 
-app.UseStaticFiles(); // Ensures .NET serves files from wwwroot 
-app.UseRouting(); // before UseAuthorization()
+app.UseCors("AllowAllHeaders");
 
 app.UseHttpsRedirection();
-app.UseAuthorization();
+app.UseStaticFiles(); // Serve wwwroot files (Angular dist)
+app.UseRouting(); // before UseAuthorization()
 
-app.UseCors("CorsPolicy");
+app.UseAuthorization();
+app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
 {
     endpoints.MapControllers();
-    endpoints.MapFallbackToFile("index.html"); // For Angular single-page application
     endpoints.MapHub<ConnectionHub>("/ConnectionHub");
     endpoints.MapHub<RspGameHub>("/RspGameHub");
 });
 
-app.MapFallbackToFile("index.html"); // Fallback to Angular's index.html
+app.MapFallbackToFile("index.html"); // fallback for SPA called after app.UseEndpoints
 
 app.Run();
 
