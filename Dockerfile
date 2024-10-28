@@ -1,5 +1,5 @@
 ﻿# 1. Use Node image to build Angular app
-FROM node:18 AS angular-build
+FROM node:16 AS angular-build
 WORKDIR /app/signalr-demo
 COPY ./signalr-demo .  # Copy only the Angular frontend folder
 RUN npm install
@@ -9,9 +9,11 @@ RUN npm run build --prod  # builds to /app/signalr-demo/dist
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
 WORKDIR /app
 
-# Copy backend files and solution file
+# Copy the backend project files
 COPY ./SignalRDemo ./SignalRDemo
-COPY ./SignalRDemo/SignalRDemo.sln ./SignalRDemo.sln  # Corrected to the actual solution file location
+
+# Copy the solution file to the current working directory
+COPY ./SignalRDemo/SignalRDemo.sln ./SignalRDemo/SignalRDemo.sln  # Correct path to solution file
 
 # Copy Angular dist to .NET backend's wwwroot
 RUN rm -rf /app/SignalRDemo/wwwroot/*
