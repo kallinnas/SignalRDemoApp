@@ -9,9 +9,9 @@ RUN npm run build --prod  # builds to /app/signalr-demo/dist
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS backend-build
 WORKDIR /app
 
-# Copy only the backend project files to avoid build context errors
+# Copy backend files and solution file
 COPY ./SignalRDemo ./SignalRDemo
-COPY ./SignalRDemoApp.sln .
+COPY ./SignalRDemo.sln ./SignalRDemo.sln  # Reference the correct solution file
 
 # Copy Angular dist to .NET backend's wwwroot
 RUN rm -rf /app/SignalRDemo/wwwroot/*
