@@ -11,7 +11,7 @@ using SignalRDemo.Data;
 namespace SignalRDemo.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241014062851_InitialCreate")]
+    [Migration("20241028202859_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />

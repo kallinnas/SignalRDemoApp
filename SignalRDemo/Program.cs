@@ -11,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // CORS
 builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
-{ builder.WithOrigins("https://mainportfolio-production-8e90.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+{ builder.WithOrigins("https://signalrdemoapp-production.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
 //{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
 //builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())); // before railway
 
@@ -42,11 +42,11 @@ if (app.Environment.IsDevelopment())
 }
 
 // Apply pending migrations (for railway migration db)
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    dbContext.Database.Migrate(); // Apply any pending migrations
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    dbContext.Database.Migrate(); // Apply any pending migrations
+}
 
 app.UseCors("AllowAllHeaders");
 
