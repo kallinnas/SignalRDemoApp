@@ -25,7 +25,7 @@ export class LoginService {
           this.validationTokenService.launchValidationToken();
         }
 
-        else { console.error('SignalR connection not established or no token.'); }
+        else { console.log('SignalR connection not established or no token.'); }
       })
       .catch(err => console.error('Error starting SignalR connection:', err));
   }

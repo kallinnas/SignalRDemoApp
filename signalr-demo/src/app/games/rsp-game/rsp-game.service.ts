@@ -23,22 +23,26 @@ export class RspGameService {
     private httpClient: HttpClient,
     private appService: AppService,
   ) {
-    const client = SignalrClient.create(httpClient);
-
+    this.initConnection();
+  }
+  
+  private initConnection() {
+    const client = SignalrClient.create(this.httpClient);
     client.connect(environment.rspGameHubURL).subscribe(
       connection => {
         this.connection = connection;
         console.log('#0 RSP Hub conn started!');
         this.register();
-        this.setupStatusPipe(connection);
-        this.setupOutcomePipe(connection);
+        this.setupStatusPipe();
+        this.setupOutcomePipe();
+        this.setupDisconnectionPipe();
       });
   }
 
-  private setupStatusPipe(connection: SignalrConnection): void {
+  private setupStatusPipe(): void {
     console.log('#1 setupStatusPipe: WaitingForPlayer / GameStarted = mergeStatus$');
 
-    let waitingForPlayer$ = connection.on<[]>('WaitingForPlayer')
+    let waitingForPlayer$ = this.connection!.on<[]>('WaitingForPlayer')
       .pipe(
         map(() => ({ status: 'waiting' } as GameStatus)),
         tap(() => {
@@ -46,7 +50,7 @@ export class RspGameService {
           this.isFirstPlayer = true;
         }));
 
-    let gameStarted$ = connection.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
+    let gameStarted$ = this.connection!.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
       .pipe(
         map(([player1, player2, group]) => ({
           status: 'playing', player: this.playerName,
@@ -58,13 +62,13 @@ export class RspGameService {
       startWith({ status: 'waiting' } as GameStatus)), gameStarted$);
   }
 
-  private setupOutcomePipe(connection: SignalrConnection): void {
+  private setupOutcomePipe(): void {
     console.log('#2 setupOutcomePipe: Drawn / Won = outcome$');
 
-    let drawn$ = connection.on<[string, UserRspPlayerDto, UserRspPlayerDto]>('Drawn')
+    let drawn$ = this.connection!.on<[string, UserRspPlayerDto, UserRspPlayerDto]>('Drawn')
       .pipe(map(([explanation, player1, player2]) => ({ explanation, player1, player2 } as Drawn)));
 
-    let won$ = connection.on<[string, string, UserRspPlayerDto, UserRspPlayerDto]>('Won')
+    let won$ = this.connection!.on<[string, string, UserRspPlayerDto, UserRspPlayerDto]>('Won')
       .pipe(map(([winner, explanation, player1, player2]) => ({ winner, explanation, player1, player2 } as Won)));
 
     this.outcome$ = merge(
@@ -72,7 +76,15 @@ export class RspGameService {
       won$.pipe(map(value => ({ type: 'won', value }))));
   }
 
-  register(): void {
+  private setupDisconnectionPipe(): void {
+    this.connection!.on('PlayerDisconnected').subscribe(() => {
+      console.log('Opponent has disconnected.');
+      alert('Your opponent has left the game.');
+      this.appService.router.navigate(['/account']);
+    });
+  }
+
+  private register(): void {
     this.playerName = this.appService.userData.name;
     const userId: string = this.appService.userData.id;
     this.connection?.send('Register', userId);

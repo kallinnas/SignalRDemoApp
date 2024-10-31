@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { SignalrService } from './signalr.service';
 import { UserRegistrDto, UserSignalrDto } from '../../models/user.model';
 import { AppService } from '../app.service';
-import { LogoutService } from './logout.service';
 
 @Injectable({ providedIn: 'root' })
 export class RegisterService {
@@ -13,7 +12,6 @@ export class RegisterService {
 
   constructor(
     private appService: AppService,
-    private logoutService: LogoutService,
     private signalrService: SignalrService
   ) { }
 
