@@ -1,25 +1,19 @@
-using SignalRDemo.HubConfig;
 using SignalRDemo.Repositories.Interfaces;
 using SignalRDemo.Repositories;
 using SignalRDemo.Services;
 using SignalRDemo.Services.Interfaces;
 using SignalRDemo.Extensions;
-using Microsoft.EntityFrameworkCore;
-using SignalRDemo.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-builder.Services.AddCors(options => options.AddPolicy("AllowAllHeaders", builder =>
+builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
 { builder.WithOrigins("https://signalrdemoapp-production.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
 //{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
-//builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader())); // before railway
 
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
 
-//var connectionString = builder.Configuration.GetConnectionString("MySqlConnection");
-//builder.Services.AddDbContext<AppDbContext>(options => options.UseMySql(connectionString, ServerVersion.Parse("8.0.39-mysql")));
 // MySQL Db
 builder.Services.AddMySqlDatabase(builder.Configuration);
 builder.Services.AddScoped<JwtService>();
@@ -41,32 +35,24 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-// Apply pending migrations (for railway migration db)
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-//    dbContext.Database.Migrate(); // Apply any pending migrations
-//}
+app.MigrateDatabase(); // Apply pending migrations (for railway migration db)
 
-app.UseCors("AllowAllHeaders");
+app.UseCors("CorsPolicy");
 
 app.UseHttpsRedirection();
 app.UseStaticFiles(); // Serve wwwroot files (Angular dist)
 app.UseRouting(); // before UseAuthorization()
 
 app.UseAuthorization();
-app.UseAuthorization();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-    endpoints.MapHub<ConnectionHub>("/ConnectionHub");
-    endpoints.MapHub<RspGameHub>("/RspGameHub");
-});
+app.UseEndpoints(endpoints => { endpoints.MapSignalREndpoints(); }); // Mapping SignalR hubs using the extension
 
 app.MapFallbackToFile("index.html"); // fallback for SPA called after app.UseEndpoints
 
 app.Run();
+
+
+
 
 // 1) Dependency: AspnetCore.SignalR.Common
 // 2) Create dir HubConfig => CustomHub.cs => impl :Hub interface
@@ -77,24 +63,12 @@ app.Run();
 // 7) Remove empty constructor from context
 // 8)
 //
-//
-//
-//
 // UI:
-// 1) npm i ngx-toastr
-// and 
-// importProvidersFrom(ToastrModule.forRoot(
-// { enableHtml: true, timeOut: 10000, positionClass: 'toast-top-right', preventDuplicates: false})),
+// 1) set routes
+// 2) auth / home comps
+// 3) service
+// 4) app config: withPreloading(PreloadAllModules)
+// 5) npm i @microsoft/signalr
+// 6) npm install ngx-signalr-websocket --save
 // 
-// 2)routes
-// 3) auth / home comps
-// 4) service
-// 5) Routes in app config: withPreloading(PreloadAllModules)
-//
-// /
-// npm i @microsoft/signalr
 // 
-// for game install on UI: npm install ngx-signalr-websocket --save
-//
-//
-// ?
