@@ -45,7 +45,7 @@ export class ValidationTokenService {
         this.appService.userData = { ...user };
         this.appService.isAuthenticated.set(true);
 
-        this.appService.toastr.success('Re-authentificated!');
+        this.appService.showSnackbar('Re-authentificated!');
 
         if (this.appService.router.url === '/auth') {
           this.appService.router.navigate(["account"]);
@@ -68,7 +68,7 @@ export class ValidationTokenService {
         console.log('#4 token expaired');
 
         localStorage.removeItem('token');
-        this.appService.toastr.info('Previous session is expired. Access again with your email and password please.');
+        this.appService.showSnackbar('Previous session is expired. Access again with your email and password please.');
       });
     }
 

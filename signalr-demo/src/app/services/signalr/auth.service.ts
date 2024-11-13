@@ -42,7 +42,7 @@ export class AuthService {
         localStorage.setItem('token', user.token);
         this.appService.isAuthenticated.set(true);
 
-        this.appService.toastr.success('Login succsessfully!');
+        this.appService.showSnackbar('Login succsessfully!');
 
         if (this.appService.isAdminUser()) {
           this.appService.router.navigate(["user-connection-state"]);
@@ -62,7 +62,7 @@ export class AuthService {
       console.log('#4 wrong credentials');
 
       // TODO: reset auth password form field
-      this.appService.toastr.error("Wrong credentials!")
+      this.appService.showSnackbar("Wrong credentials!")
     });
   }
 

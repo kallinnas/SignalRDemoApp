@@ -4,12 +4,11 @@ import { AppService } from '../../services/app.service';
 import { LogoutService } from '../../services/signalr/logout.service';
 import { SignalrService } from '../../services/signalr/signalr.service';
 import { GeneralModule } from '../../modules/general.model';
-import { GameManagerComponent } from "../../games/game-manager/game-manager.component";
 
 @Component({
   selector: 'app-user-connection-state',
   standalone: true,
-  imports: [GeneralModule, GameManagerComponent, GameManagerComponent],
+  imports: [GeneralModule],
   templateUrl: './user-connection-state.component.html', styleUrl: './user-connection-state.component.scss'
 })
 export class UserConnectionStateComponent {

@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { ToastrService } from 'ngx-toastr';
 import { UserSignalrDto } from '../models/user.model';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
@@ -12,7 +12,7 @@ export class AppService {
 
   constructor(
     public router: Router,
-    public toastr: ToastrService,
+    private snackbar: MatSnackBar
   ) { }
 
   isAdminUser(): boolean {
@@ -22,12 +22,16 @@ export class AppService {
 
       const payload = JSON.parse(atob(token.split('.')[1]));
       return payload['role'] === '1';
-    } 
-    
+    }
+
     else return false;
   }
 
   getToken(): string | null {
     return localStorage.getItem('token');
+  }
+
+  showSnackbar(message: string) {
+    this.snackbar.open(message, 'Close', { duration: 3000 });
   }
 }

@@ -41,7 +41,7 @@ export class RegisterService {
       localStorage.setItem('token', user.token);
       this.appService.isAuthenticated.set(true);
 
-      this.appService.toastr.success('Registrated successfully!');
+      this.appService.showSnackbar('Registrated successfully!');
       this.appService.router.navigate(["account"]);
 
       this.signalrService.offConnection([this.successCommand, this.failCommand]);
@@ -55,7 +55,7 @@ export class RegisterService {
       console.log('#4 registrationListenFail');
 
       // TODO: reset auth email form field
-      this.appService.toastr.info('Such email already taken. Please choose another one.');
+      this.appService.showSnackbar('Such email already taken. Please choose another one.');
     });
   }
 }
