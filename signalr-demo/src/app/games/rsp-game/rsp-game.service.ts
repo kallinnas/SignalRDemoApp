@@ -1,11 +1,12 @@
+import { Observable, map, merge, startWith, tap } from 'rxjs';
+import { SignalrClient, SignalrConnection } from 'ngx-signalr-websocket';
 import { Injectable, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, map, merge, startWith, tap } from 'rxjs';
+
 import { environment } from '../../../environments/environment';
-import { GameStatus, Drawn, Won } from './rsp-game.model';
-import { SignalrClient, SignalrConnection } from 'ngx-signalr-websocket';
-import { AppService } from '../../services/app.service';
 import { UserRspPlayerDto } from '../../models/user.model';
+import { GameStatus, Drawn, Won } from './rsp-game.model';
+import { AppService } from '../../services/app.service';
 
 @Injectable({ providedIn: 'root' })
 export class RspGameService {
@@ -22,49 +23,48 @@ export class RspGameService {
   constructor(
     private httpClient: HttpClient,
     private appService: AppService,
-  ) {
-    this.initConnection();
-  }
-  
-  private initConnection() {
+  ) { }
+
+  initConnection() {
     const client = SignalrClient.create(this.httpClient);
     client.connect(environment.rspGameHubURL).subscribe(
       connection => {
         this.connection = connection;
-        console.log('#0 RSP Hub conn started!');
-        this.register();
-        this.setupStatusPipe();
-        this.setupOutcomePipe();
-        this.setupDisconnectionPipe();
+        this.onStatusPipe();
+        this.onResultPipe();
+        this.onDisconnectPipe();
+        this.startRspGame();
       });
   }
 
-  private setupStatusPipe(): void {
-    console.log('#1 setupStatusPipe: WaitingForPlayer / GameStarted = mergeStatus$');
+  private startRspGame(): void {
+    this.playerName = this.appService.userData.name;
+    const userId: string = this.appService.userData.id;
+    this.connection?.send('StartRspGame', userId);
+  }
 
-    let waitingForPlayer$ = this.connection!.on<[]>('WaitingForPlayer')
+  private onStatusPipe(): void {
+    let WaitingForOpponent$ = this.connection!.on<[]>('WaitingForOpponent')
       .pipe(
         map(() => ({ status: 'waiting' } as GameStatus)),
-        tap(() => {
-          console.log('onWaitingForPlayer');
-          this.isFirstPlayer = true;
-        }));
+        tap(() => { this.isFirstPlayer = true; }));
 
     let gameStarted$ = this.connection!.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
       .pipe(
         map(([player1, player2, group]) => ({
           status: 'playing', player: this.playerName,
           player1, player2, group
-        } as GameStatus)),
-        tap(() => console.log('onGameStarted')));
+        } as GameStatus)));
 
-    this.status$ = merge(waitingForPlayer$.pipe(
+    this.status$ = merge(WaitingForOpponent$.pipe(
       startWith({ status: 'waiting' } as GameStatus)), gameStarted$);
   }
 
-  private setupOutcomePipe(): void {
-    console.log('#2 setupOutcomePipe: Drawn / Won = outcome$');
+  throw(group: string, selection: string) {
+    this.connection?.send('Throw', group, this.playerName, selection);
+  }
 
+  private onResultPipe(): void {
     let drawn$ = this.connection!.on<[string, UserRspPlayerDto, UserRspPlayerDto]>('Drawn')
       .pipe(map(([explanation, player1, player2]) => ({ explanation, player1, player2 } as Drawn)));
 
@@ -76,21 +76,11 @@ export class RspGameService {
       won$.pipe(map(value => ({ type: 'won', value }))));
   }
 
-  private setupDisconnectionPipe(): void {
+  private onDisconnectPipe(): void {
     this.connection!.on('PlayerDisconnected').subscribe(() => {
-      console.log('Opponent has disconnected.');
-      alert('Your opponent has left the game.');
-      this.appService.router.navigate(['/account']);
+      this.appService.showSnackbar('Opponent has disconnected.');
+      this.appService.router.navigate(['account']);
     });
   }
 
-  private register(): void {
-    this.playerName = this.appService.userData.name;
-    const userId: string = this.appService.userData.id;
-    this.connection?.send('Register', userId);
-  }
-
-  throw(group: string, selection: string) {
-    this.connection?.send('Throw', group, this.playerName, selection);
-  }
 }

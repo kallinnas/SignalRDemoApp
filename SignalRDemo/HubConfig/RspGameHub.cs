@@ -24,7 +24,7 @@ public class RspGameHub : Hub
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task Register(string userId)
+    public async Task StartRspGame(string userId)
     {
         try
         {
@@ -49,7 +49,7 @@ public class RspGameHub : Hub
 
             else
             {
-                await Clients.Caller.SendAsync("WaitingForPlayer");
+                await Clients.Caller.SendAsync("WaitingForOpponent");
             }
         }
 
@@ -90,16 +90,15 @@ public class RspGameHub : Hub
                 if (winner == null)
                 {
                     await Clients.Group(groupName).SendAsync("Drawn", game.Explanation, player1, player2);
-                    return;
                 }
 
                 else
                 {
                     await Clients.Group(groupName).SendAsync("Won", winner, game.Explanation, player1, player2);
-                    return;
                 }
 
                 game.Reset();
+                return;
             }
         }
 

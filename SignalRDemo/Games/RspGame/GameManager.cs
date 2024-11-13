@@ -18,18 +18,13 @@ public class GameManager
             {
                 return (gameGroup.Player1, gameGroup.Player2);
             }
-            else
-            {
-                throw new InvalidOperationException("Both players are not available in the game group.");
-            }
+
+            else { throw new InvalidOperationException("Both players are not available in the game group."); }
         }
-        else
-        {
-            throw new KeyNotFoundException($"No game group found with the name: {groupName}");
-        }
+
+        else { throw new KeyNotFoundException($"No game group found with the name: {groupName}"); }
     }
 
-    //public GameGroup Register(Guid userId, string name)
     public GameGroup Register(UserRspPlayerDto user)
     {
         lock (_locker)
@@ -52,6 +47,20 @@ public class GameManager
             return _waitingGroup;
         }
     }
+
+    //public string? GetOpponent(string userId)
+    //{
+    //    lock (_locker)
+    //    {
+    //        foreach (var gameGroup in _games.Values)
+    //        {
+    //            if (gameGroup.Player1?.Id.ToString() == userId) { return gameGroup.Player2!.Id.ToString(); }
+    //            else if (gameGroup.Player2?.Id.ToString() == userId) { return gameGroup.Player1!.Id.ToString(); }
+    //        }
+
+    //        return null;
+    //    }
+    //}
 
     public Game Throw(string groupName, string player, Sign sign)
     {
