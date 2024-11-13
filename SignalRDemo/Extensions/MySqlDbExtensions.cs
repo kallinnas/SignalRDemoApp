@@ -7,8 +7,8 @@ public static class MySqlDbExtensions
 {
     public static IServiceCollection AddMySqlDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        string? mySqlConnectionString = configuration.GetConnectionString("MySqlConnection");
-        //string? mySqlConnectionString = configuration.GetConnectionString("MySqlRailwayConnection");
+        //string? mySqlConnectionString = configuration.GetConnectionString("MySqlConnection");
+        string? mySqlConnectionString = configuration.GetConnectionString("MySqlRailwayConnection");
 
         if (string.IsNullOrEmpty(mySqlConnectionString))
         {
