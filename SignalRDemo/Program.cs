@@ -45,7 +45,11 @@ app.UseRouting(); // before UseAuthorization()
 
 app.UseAuthorization();
 
-app.UseEndpoints(endpoints => { endpoints.MapSignalREndpoints(); }); // Mapping SignalR hubs using the extension
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapSignalREndpoints(); // Mapping SignalR hubs using the extensions
+});
 
 app.MapFallbackToFile("index.html"); // fallback for SPA called after app.UseEndpoints
 
