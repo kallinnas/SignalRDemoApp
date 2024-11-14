@@ -66,11 +66,7 @@ public class GameManager
     {
         lock (_locker)
         {
-            Console.WriteLine(_games[groupName]);
-            Console.WriteLine(_games[groupName].Game);
-            Console.WriteLine(_games[groupName].Game);
             var game = _games[groupName].Game;
-            Console.WriteLine("before game.Throw(player, sign)");
             game.Throw(player, sign);
             return game;
         }

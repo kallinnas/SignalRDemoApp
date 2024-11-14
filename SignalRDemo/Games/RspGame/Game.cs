@@ -74,8 +74,6 @@ public class Game
 
     public void Throw(string player, Sign selection)
     {
-        Console.WriteLine(Player1.Name);
-        Console.WriteLine(Player2.Name);
         if (player == Player1.Name) { Player1.Sign = selection; }
         else { Player2.Sign = selection; }
     }
