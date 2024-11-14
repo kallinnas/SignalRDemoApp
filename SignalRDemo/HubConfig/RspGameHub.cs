@@ -72,9 +72,10 @@ public class RspGameHub : Hub
 
             // Fills up game obg with throw-sign values to hold game state proccess
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
-
+            Console.WriteLine("game.Player1 " + game.Player1 + "game.Player2 " + game.Player2 + "game.Player2 " + game.Winner);
             if (game.Pending) // Returns opponentsName and reports to first-move player about Pending state 
             {
+                Console.WriteLine("Pending");
                 await Clients.Group(groupName).SendAsync("Pending");
                 return;
             }
@@ -87,7 +88,7 @@ public class RspGameHub : Hub
                 (player1, player2) = await _gameService.UpdateGameResultAsync(player1!, player2, isWinnerFirstPlayer);
 
                 var winner = game.Winner;
-
+                Console.WriteLine("game.Player1 " + game.Player1 + "game.Player2 " + game.Player2 + "game.Player2 " + game.Winner);
                 if (winner == null)
                 {
                     await Clients.Group(groupName).SendAsync("Drawn", game.Explanation, player1, player2);
