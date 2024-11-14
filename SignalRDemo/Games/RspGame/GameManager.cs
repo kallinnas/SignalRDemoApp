@@ -64,10 +64,13 @@ public class GameManager
 
     public Game Throw(string groupName, string player, Sign sign)
     {
+        Console.WriteLine(_locker);
         lock (_locker)
         {
             var game = _games[groupName].Game;
+            Console.WriteLine(game);
             game.Throw(player, sign);
+            Console.WriteLine(game);
             return game;
         }
     }
