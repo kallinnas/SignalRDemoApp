@@ -61,8 +61,9 @@ public class RspGameHub : Hub
         try
         {
             // Approve connection between users paired during Register()
+            Console.WriteLine("Throw BE: player - " + player);
             var currentPlayerConnectionId = _connectedPlayers.FirstOrDefault(x => x.Value == groupName && x.Key != Context.ConnectionId).Key;
-
+            Console.WriteLine("currentPlayerConnectionId " + currentPlayerConnectionId);
             if (currentPlayerConnectionId == null)
             {
                 await Clients.Group(groupName).SendAsync("PlayerDisconnected");
