@@ -14,7 +14,7 @@ public class Game
     {
         get
         {   // get{} allows use its logic block as regular field and add logic to calculate a value without changing the outer interface of the class.
-            if (Pending) { throw new InvalidOperationException("Game not complete"); }
+            if (Pending) { throw new InvalidOperationException("Game not complete: Winner"); }
 
             return Signs.Beats(Player1.Sign!.Value, Player2.Sign!.Value) switch
             {   /* The switch expression allows a more concise way to map inputs to outputs */
@@ -27,7 +27,7 @@ public class Game
 
     public void Reset() // Resets players Throw and sets new achieved point before displaying score
     {
-        if (Pending) { throw new InvalidOperationException("Game not complete"); }
+        if (Pending) { throw new InvalidOperationException("Game not complete: Reset"); }
 
         switch (Signs.Beats(Player1.Sign!.Value, Player2.Sign!.Value))
         {
@@ -61,7 +61,7 @@ public class Game
     {
         get
         {
-            if (Pending) { throw new InvalidOperationException("Game not complete"); }
+            if (Pending) { throw new InvalidOperationException("Game not complete: Explanation"); }
 
             return Signs.Beats(Player1.Sign!.Value, Player2.Sign!.Value) switch
             {
