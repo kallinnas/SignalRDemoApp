@@ -25,7 +25,7 @@ public class UserRepository : IUserRepository
     public async Task<UserRspPlayerDto?> UpdatePlayersResultAsync(Guid playerId, bool? isWinner)
     {
         string query = @"
-        UPDATE Users 
+        UPDATE users 
         SET RspGames = RspGames + 1, 
             RspWins = CASE WHEN @isWinner = 1 THEN RspWins + 1 ELSE RspWins END,
             RspDraws = CASE WHEN @isWinner IS NULL THEN RspDraws + 1 ELSE RspDraws END
