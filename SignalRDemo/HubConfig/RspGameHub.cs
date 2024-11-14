@@ -70,6 +70,10 @@ public class RspGameHub : Hub
                 return;
             }
 
+            Console.WriteLine(groupName);
+            Console.WriteLine(player);
+            Console.WriteLine(selection);
+            Console.WriteLine(Enum.Parse<Sign>(selection, true));
             // Fills up game obg with throw-sign values to hold game state proccess
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
             Console.WriteLine("game.Player1 " + game.Player1 + "game.Player2 " + game.Player2 + "game.Player2 " + game.Winner);
