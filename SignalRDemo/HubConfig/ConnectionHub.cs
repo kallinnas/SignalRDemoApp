@@ -42,9 +42,6 @@ public partial class ConnectionHub : Hub
     {
         try
         {
-            Console.WriteLine($"JWT_KEY is: {Environment.GetEnvironmentVariable("JWT_KEY")}");
-            Console.WriteLine(111111111111111111111111111111111111111111111111111111111);
-
             var user = await context.Users.SingleOrDefaultAsync(p => p.Email == dto.Email);
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))

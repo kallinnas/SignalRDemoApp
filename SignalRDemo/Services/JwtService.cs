@@ -16,6 +16,9 @@ public class JwtService
         var tokenHandler = new JwtSecurityTokenHandler();
         var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
+        Console.WriteLine($"JWT_KEY is: {Environment.GetEnvironmentVariable("JWT_KEY")}");
+        Console.WriteLine("1111111111111111111111111111111111111111111111111111111111111");
+
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(new Claim[]
