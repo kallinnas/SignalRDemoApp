@@ -9,12 +9,14 @@ namespace SignalRDemo.Services;
 public class JwtService
 {
     private readonly IConfiguration _configuration;
-    public JwtService(IConfiguration configuration) { _configuration = configuration; }
+    private readonly IHostEnvironment _env;
+    public JwtService(IConfiguration configuration, IHostEnvironment env) { _configuration = configuration; _env = env; }
 
     public string GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new InvalidOperationException("JWT_KEY environment variable is missing"));
+        var key = Encoding.ASCII.GetBytes(GetJwtKey());
+        
         //var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!); - was used when Jwt:Key was set in appsettings
 
         var tokenDescriptor = new SecurityTokenDescriptor
@@ -40,8 +42,7 @@ public class JwtService
     public bool ValidateToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ??
-            throw new InvalidOperationException("JWT_KEY environment variable is missing"));
+        var key = Encoding.ASCII.GetBytes(GetJwtKey());
 
         try
         {
@@ -79,8 +80,7 @@ public class JwtService
     public ClaimsPrincipal? GetUserFromToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ??
-            throw new InvalidOperationException("JWT_KEY environment variable is missing"));
+        var key = Encoding.ASCII.GetBytes(GetJwtKey());
 
         try
         {
@@ -131,6 +131,18 @@ public class JwtService
         }
 
         return null;
+    }
+
+    private string GetJwtKey()
+    {
+        if (_env.IsProduction())
+        {
+            return Environment.GetEnvironmentVariable("JWT_KEY") ??
+                   throw new InvalidOperationException("JWT_KEY environment variable is missing");
+        }
+
+        return _configuration["Jwt:Key"] ??
+               throw new InvalidOperationException("JWT_KEY setting is missing from appsettings.json");
     }
 }
 

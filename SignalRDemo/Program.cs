@@ -1,11 +1,8 @@
 using SignalRDemo.Repositories.Interfaces;
-using SignalRDemo.Repositories;
-using SignalRDemo.Services;
 using SignalRDemo.Services.Interfaces;
+using SignalRDemo.Repositories;
 using SignalRDemo.Extensions;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
+using SignalRDemo.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,23 +20,7 @@ builder.Services.AddMySqlDatabase(builder.Configuration);
 builder.Services.AddScoped<JwtService>();
 
 // JWT Authentication
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
-    };
-});
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 // Default container services.
 builder.Services.AddControllers();

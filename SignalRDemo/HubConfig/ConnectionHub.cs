@@ -66,12 +66,12 @@ public partial class ConnectionHub : Hub
 
             if (!isValid)
             {
-                await Clients.Caller.SendAsync("Valid_Token_Fail");
+                await Clients.Caller.SendAsync("VALID_TOKEN_FAIL");
             }
 
             else
             {
-                await Login(_jwtService.GetUserInfoFromToken(token), "Valid_Token_Success");
+                await Login(_jwtService.GetUserInfoFromToken(token), "VALID_TOKEN_SUCCESS");
             }
         }
 

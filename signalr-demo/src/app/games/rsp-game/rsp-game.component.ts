@@ -152,7 +152,7 @@ export class RspGameComponent implements OnChanges {
       this.disableButtons = false;
       this.startIconAnimation();
       this.outputSubject.next({ displayIcons: '', winnerState: '' });
-    }, 5000);
+    }, 2200);
   }
   // ANIMATION ICON SIGNS [END]
 }
