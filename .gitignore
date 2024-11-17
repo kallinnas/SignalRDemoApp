@@ -8,3 +8,4 @@ signalr-demo/.vscode/
 person connection models.sql
 /signalr-demo/dist/signalr-demos
 /signalr-demo/dist/signalr-demo
+/SignalRDemo/appsettings.Development.json

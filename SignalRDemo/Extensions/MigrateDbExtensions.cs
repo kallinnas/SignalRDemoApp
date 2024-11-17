@@ -10,7 +10,12 @@ public static class MigrateDbExtensions
         using (var scope = app.ApplicationServices.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-            dbContext.Database.Migrate(); // Apply any pending migrations
+
+            // Ensure migrations only apply if necessary
+            if (!dbContext.Database.GetPendingMigrations().Any())
+            {
+                dbContext.Database.Migrate();
+            }
         }
 
         return app;

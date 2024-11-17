@@ -7,9 +7,7 @@ using SignalRDemo.Extensions;
 var builder = WebApplication.CreateBuilder(args);
 
 // CORS
-builder.Services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
-{ builder.WithOrigins("https://signalrdemoapp-production.up.railway.app").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
-//{ builder.WithOrigins("http://localhost:4200").AllowCredentials().AllowAnyHeader().AllowAnyMethod(); }));
+builder.Services.AddAppCors(builder.Configuration);
 
 // SIGNAL_R
 builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);

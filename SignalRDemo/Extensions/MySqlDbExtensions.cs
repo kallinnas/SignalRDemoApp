@@ -1,18 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using SignalRDemo.Data;
 
-namespace SignalRDemo.Extensions;
-
 public static class MySqlDbExtensions
 {
     public static IServiceCollection AddMySqlDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        //string? mySqlConnectionString = configuration.GetConnectionString("MySqlConnection");
-        string? mySqlConnectionString = configuration.GetConnectionString("MySqlRailwayConnection");
+        // Retrieve connection string from environment variables or configuration
+        string? mySqlConnectionString = Environment.GetEnvironmentVariable("SIGNALR_MYSQL_CONNECTION_STRING")
+                                         ?? configuration.GetConnectionString("MySqlConnection");
 
         if (string.IsNullOrEmpty(mySqlConnectionString))
         {
-            throw new InvalidOperationException("The connection string 'MySqlRailwayConnection' was not found.");
+            throw new InvalidOperationException("The connection string 'MySqlConnection' was not found.");
         }
 
         services.AddDbContext<AppDbContext>(options =>
