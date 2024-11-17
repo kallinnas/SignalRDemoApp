@@ -14,7 +14,8 @@ public class JwtService
     public string GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new InvalidOperationException("JWT_KEY environment variable is missing"));
+        //var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         Console.WriteLine($"JWT_KEY is: {Environment.GetEnvironmentVariable("JWT_KEY")}");
         Console.WriteLine("1111111111111111111111111111111111111111111111111111111111111");
@@ -42,7 +43,9 @@ public class JwtService
     public bool ValidateToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new InvalidOperationException("JWT_KEY environment variable is missing"));
+
+        //var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         try
         {
@@ -80,7 +83,9 @@ public class JwtService
     public ClaimsPrincipal? GetUserFromToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
+        var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JWT_KEY") ?? throw new InvalidOperationException("JWT_KEY environment variable is missing"));
+
+        //var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         try
         {
