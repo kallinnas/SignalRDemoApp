@@ -5,7 +5,6 @@ public static class MySqlDbExtensions
 {
     public static IServiceCollection AddMySqlDatabase(this IServiceCollection services, IConfiguration configuration)
     {
-        // Retrieve connection string from environment variables or configuration
         string? mySqlConnectionString = Environment.GetEnvironmentVariable("SIGNALR_MYSQL_CONNECTION_STRING")
                                          ?? configuration.GetConnectionString("MySqlConnection");
 

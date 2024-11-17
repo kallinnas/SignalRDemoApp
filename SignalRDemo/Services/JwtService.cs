@@ -1,6 +1,5 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 using SignalRDemo.Models;
-using System.Data;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,7 +14,7 @@ public class JwtService
     public string GenerateJwtToken(User user)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         var tokenDescriptor = new SecurityTokenDescriptor
         {
@@ -40,7 +39,7 @@ public class JwtService
     public bool ValidateToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         try
         {
@@ -78,7 +77,7 @@ public class JwtService
     public ClaimsPrincipal? GetUserFromToken(string token)
     {
         var tokenHandler = new JwtSecurityTokenHandler();
-        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]);
+        var key = Encoding.ASCII.GetBytes(_configuration["Jwt:Key"]!);
 
         try
         {
@@ -122,7 +121,7 @@ public class JwtService
                 {
                     Id = Guid.Parse(userIdClaim),
                     Email = emailClaim,
-                    Name = nameClaim,
+                    Name = nameClaim!,
                     Role = sbyte.Parse(roleClaim)
                 };
             }
