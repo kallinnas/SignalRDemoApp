@@ -6,6 +6,9 @@ using SignalRDemo.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// RAILWAY VARIABLES
+builder.Configuration.AddEnvironmentVariables();
+
 // CORS
 builder.Services.AddAppCors(builder.Configuration);
 
