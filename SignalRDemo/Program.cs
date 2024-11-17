@@ -3,6 +3,9 @@ using SignalRDemo.Repositories;
 using SignalRDemo.Services;
 using SignalRDemo.Services.Interfaces;
 using SignalRDemo.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +21,25 @@ builder.Services.AddSignalR(options => options.EnableDetailedErrors = true);
 // MySQL Db
 builder.Services.AddMySqlDatabase(builder.Configuration);
 builder.Services.AddScoped<JwtService>();
+
+// JWT Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
 // Default container services.
 builder.Services.AddControllers();
@@ -44,6 +66,7 @@ app.UseHttpsRedirection();
 app.UseStaticFiles(); // Serve wwwroot files (Angular dist)
 app.UseRouting(); // before UseAuthorization()
 
+app.UseAuthentication(); // goes before UseAuthorization
 app.UseAuthorization();
 
 app.UseEndpoints(endpoints =>
