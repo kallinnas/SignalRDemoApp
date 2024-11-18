@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
 import { UserSignalrDto } from '../../models/user.model';
 import { AppService } from '../../services/app.service';
-import { LogoutService } from '../../services/signalr/logout.service';
-import { SignalrService } from '../../services/signalr/signalr.service';
+import { LogoutService } from '../../services/auth/logout.service';
+import { SignalrService } from '../../services/auth/signalr.service';
 import { GeneralModule } from '../../modules/general.model';
 
 @Component({

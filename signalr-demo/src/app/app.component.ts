@@ -1,9 +1,9 @@
 import { Component, computed, effect, OnInit } from '@angular/core';
-import { RouterLink, RouterOutlet } from '@angular/router';
+import { RouterOutlet } from '@angular/router';
 import { GeneralModule } from './modules/general.model';
-import { LoginService } from './services/signalr/login.service';
+import { LoginService } from './services/auth/login.service';
 import { AppService } from './services/app.service';
-import { LogoutService } from './services/signalr/logout.service';
+import { LogoutService } from './services/auth/logout.service';
 import { SidenavComponent } from './components/sidenav/sidenav.component';
 import { HeaderComponent } from './components/header/header.component';
 
@@ -22,8 +22,7 @@ export class AppComponent implements OnInit {
     public logoutService: LogoutService,
     private loginService: LoginService,
     public appService: AppService,
-  ) {
-  }
+  ) { }
 
   ngOnInit(): void {
     this.loginService.checkAuthentication();

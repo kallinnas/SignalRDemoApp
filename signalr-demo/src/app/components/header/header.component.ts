@@ -1,7 +1,7 @@
 import { Component, computed, EventEmitter, Output } from '@angular/core';
 import { GeneralModule } from '../../modules/general.model';
 import { AppService } from '../../services/app.service';
-import { LogoutService } from '../../services/signalr/logout.service';
+import { LogoutService } from '../../services/auth/logout.service';
 import { RouterLink } from '@angular/router';
 
 @Component({

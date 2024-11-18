@@ -2,8 +2,8 @@ import { Component, computed, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { GeneralModule } from '../modules/general.model';
 import { UserAuthDto, UserRegistrDto } from '../models/user.model';
-import { AuthService } from '../services/signalr/auth.service';
-import { RegisterService } from '../services/signalr/register.service';
+import { AuthService } from '../services/auth/auth.service';
+import { RegisterService } from '../services/auth/register.service';
 import { AppService } from '../services/app.service';
 
 @Component({

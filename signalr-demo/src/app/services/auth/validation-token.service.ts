@@ -7,8 +7,8 @@ import { AppService } from '../app.service';
 export class ValidationTokenService {
 
   private methodName: string = 'ValidationToken';
-  successCommand: string = 'Valid_Token_Success';
-  failCommand: string = 'Valid_Token_Fail';
+  successCommand: string = 'VALID_TOKEN_SUCCESS';
+  failCommand: string = 'VALID_TOKEN_FAIL';
 
   constructor(
     private appService: AppService,
@@ -23,8 +23,6 @@ export class ValidationTokenService {
 
   private async validationTokenAsync() {
     try {
-      console.log('#3 validationToken');
-
       await this.signalrService.hubConnection.invoke(this.methodName, this.appService.getToken())
         .then(() => {
           console.log('#7 after validationToken: then()');
@@ -37,10 +35,7 @@ export class ValidationTokenService {
 
   private validateTokenListenSuccess() {
     try {
-      console.log('#2 validateTokenListenSuccess');
-
       this.signalrService.hubConnection.on(this.successCommand, (user: UserSignalrDto) => {
-        console.log('#4 validateTokenListenSuccess');
 
         this.appService.userData = { ...user };
         this.appService.isAuthenticated.set(true);
@@ -62,11 +57,7 @@ export class ValidationTokenService {
 
   private validateTokenListenFail() {
     try {
-      console.log('#2 validateTokenListenFail');
-
       this.signalrService.hubConnection.on(this.failCommand, () => {
-        console.log('#4 token expaired');
-
         localStorage.removeItem('token');
         this.appService.showSnackbar('Previous session is expired. Access again with your email and password please.');
       });
