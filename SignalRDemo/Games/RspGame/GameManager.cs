@@ -79,6 +79,7 @@ public class GameManager
             if (_games.ContainsKey(groupName))
             {
                 var group = _games[groupName];
+                _waitingGroup = null;
                 group.ResetGame();
                 _games.Remove(groupName);
             }
