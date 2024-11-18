@@ -18,7 +18,7 @@ public class RspGameHub : Hub
         {
             _connectedPlayers.Remove(Context.ConnectionId);
             _manager.RemoveGameGroup(groupName, Context.ConnectionId);
-            await Clients.Group(groupName).SendAsync("PlayerDisconnected");
+            await Clients.Group(groupName).SendAsync("PLAYER_DISCONNECTED");
         }
 
         await base.OnDisconnectedAsync(exception);
@@ -44,12 +44,12 @@ public class RspGameHub : Hub
 
             if (group.Full)
             {
-                await Clients.Group(group.Name).SendAsync("GameStarted", group.Game.Player1, group.Game.Player2, group.Name);
+                await Clients.Group(group.Name).SendAsync("GAME_STARTED", group.Game.Player1, group.Game.Player2, group.Name);
             }
 
             else
             {
-                await Clients.Caller.SendAsync("WaitingForOpponent");
+                await Clients.Caller.SendAsync("WAITING_FOR_OPPONENT");
             }
         }
 
@@ -71,12 +71,9 @@ public class RspGameHub : Hub
 
             // Fills up game obg with throw-sign values to hold game state proccess
             var game = _manager.Throw(groupName, player, Enum.Parse<Sign>(selection, true));
-            Console.WriteLine(game.Player1.Sign);
-            Console.WriteLine(game.Player2.Sign);
-            Console.WriteLine(game.Pending);
+
             if (game.Pending) // Returns opponentsName and reports to first-move player about Pending state 
             {
-                Console.WriteLine("Pending");
                 await Clients.Group(groupName).SendAsync("Pending");
                 return;
             }
@@ -92,12 +89,12 @@ public class RspGameHub : Hub
 
                 if (winner == null)
                 {
-                    await Clients.Group(groupName).SendAsync("Drawn", game.Explanation, player1, player2);
+                    await Clients.Group(groupName).SendAsync("DRAW", game.Explanation, player1, player2);
                 }
 
                 else
                 {
-                    await Clients.Group(groupName).SendAsync("Won", winner, game.Explanation, player1, player2);
+                    await Clients.Group(groupName).SendAsync("WON", winner, game.Explanation, player1, player2);
                 }
 
                 game.Reset();

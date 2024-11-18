@@ -1,7 +1,7 @@
-import { Component, Input, OnChanges, signal, SimpleChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, signal, SimpleChanges } from '@angular/core';
 import { GeneralModule } from '../../modules/general.model';
-import { BehaviorSubject, map, Observable } from 'rxjs';
-import { GameStatus, Drawn, Won, Signs, Sign, GameResult } from './rsp-game.model';
+import { BehaviorSubject, map, Subscription } from 'rxjs';
+import { GameStatus, Drawn, Won, Signs, Sign, GameResult, GameResultEnum } from './rsp-game.model';
 import { RspGameService } from './rsp-game.service';
 import { AppService } from '../../services/app.service';
 import { UserRspPlayerDto } from '../../models/user.model';
@@ -14,7 +14,7 @@ import { UserRspPlayerDto } from '../../models/user.model';
   templateUrl: './rsp-game.component.html',
   styleUrl: './rsp-game.component.scss'
 })
-export class RspGameComponent implements OnChanges {
+export class RspGameComponent implements OnChanges, OnInit, OnDestroy {
 
   Sign = Signs;
   signs = Signs.getAll();
@@ -25,6 +25,7 @@ export class RspGameComponent implements OnChanges {
   @Input() game!: GameStatus;
   private outputSubject = new BehaviorSubject<GameResult>({ displayIcons: '', winnerState: '' });
   output$ = this.outputSubject.asObservable();
+  private outcomeSubscription!: Subscription;
 
   isOpponentMadeMove = signal<boolean>(false);
   disableButtons = false;
@@ -36,28 +37,41 @@ export class RspGameComponent implements OnChanges {
   constructor(
     public rspGameService: RspGameService,
     private appService: AppService
-  ) {
-    this.rspGameService.outcome$!.pipe(
-      map(outcome => {
-        switch (outcome.type) {
-          case 'drawn': return this.processDrawn(outcome.value as Drawn);
-          case 'won': return this.processWon(outcome.value as Won);
-          default: throw ('Unexpected result');
-        }
-      })
-    ).subscribe(result => {
-      this.outputSubject.next(result);
-    });
-  }
+  ) { }
 
   ngOnInit(): void {
     this.startIconAnimation();
+    this.subscribeOutcomeGameResults();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['game'] && this.game) {
       this.player1Stats.set(this.game.player1 ?? null);
       this.player2Stats.set(this.game.player2 ?? null);
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.outcomeSubscription) {
+      this.outcomeSubscription.unsubscribe();
+    }
+  }
+
+  private subscribeOutcomeGameResults(): void {
+    try {
+      this.outcomeSubscription = this.rspGameService.outcome$!.pipe(
+        map(outcome => {
+          switch (outcome.type) {
+            case GameResultEnum.Drawn: return this.processDrawn(outcome.value as Drawn);
+            case GameResultEnum.Won: return this.processWon(outcome.value as Won);
+            default: throw ('Unexpected result');
+          }
+        }))
+        .subscribe(result => { this.outputSubject.next(result); });
+    }
+
+    catch (err) {
+      console.log(err);
     }
   }
 

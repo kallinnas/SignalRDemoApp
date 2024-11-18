@@ -19,6 +19,7 @@ export class HeaderComponent {
 
   connBtn: string = 'User Connection State';
   rspBtn: string = 'Rock-Scissors-Paper'
+  accountBtn: string = 'Account'
 
   constructor(
     public appService: AppService,

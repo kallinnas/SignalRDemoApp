@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../../environments/environment';
 import { UserRspPlayerDto } from '../../models/user.model';
-import { GameStatus, Drawn, Won } from './rsp-game.model';
+import { GameStatus, Drawn, Won, GameStatusEnum, GameResultEnum } from './rsp-game.model';
 import { AppService } from '../../services/app.service';
 
 @Injectable({ providedIn: 'root' })
@@ -18,7 +18,13 @@ export class RspGameService {
   waitingUser = signal<UserRspPlayerDto | null>(null);
 
   status$?: Observable<GameStatus>;
-  outcome$?: Observable<{ type: string, value: Drawn | Won }>;
+  outcome$?: Observable<{ type: GameResultEnum, value: Drawn | Won }>;
+
+  private waitingForOpponentCommand: string = 'WAITING_FOR_OPPONENT';
+  private playerDisconnectedCommand: string = 'PLAYER_DISCONNECTED';
+  private gameStartedCommand: string = 'GAME_STARTED';
+  private startRspGameMethodName: string = 'StartRspGame';
+  private throwMethodName: string = 'Throw';
 
   constructor(
     private httpClient: HttpClient,
@@ -37,47 +43,53 @@ export class RspGameService {
       });
   }
 
+  disconnectConnection(): void {
+    if (this.connection) {
+      this.connection.close();
+    }
+  }
+
   private startRspGame(): void {
     this.playerName = this.appService.userData.name;
     const userId: string = this.appService.userData.id;
-    this.connection?.send('StartRspGame', userId);
+    this.connection?.send(this.startRspGameMethodName, userId);
   }
 
   private onStatusPipe(): void {
-    let WaitingForOpponent$ = this.connection!.on<[]>('WaitingForOpponent')
+    const waitingForOpponent$: Observable<GameStatus> = this.connection!.on<[]>(this.waitingForOpponentCommand)
       .pipe(
-        map(() => ({ status: 'waiting' } as GameStatus)),
+        map(() => ({ status: GameStatusEnum.Waiting } as GameStatus)),
         tap(() => { this.isFirstPlayer = true; }));
 
-    let gameStarted$ = this.connection!.on<[UserRspPlayerDto, UserRspPlayerDto, string]>('GameStarted')
+    const gameStarted$: Observable<GameStatus> = this.connection!.on<[UserRspPlayerDto, UserRspPlayerDto, string]>(this.gameStartedCommand)
       .pipe(
         map(([player1, player2, group]) => ({
-          status: 'playing', player: this.playerName,
+          status: GameStatusEnum.Playing, player: this.playerName,
           player1, player2, group
         } as GameStatus)));
 
-    this.status$ = merge(WaitingForOpponent$.pipe(
-      startWith({ status: 'waiting' } as GameStatus)), gameStarted$);
+    this.status$ = merge(waitingForOpponent$.pipe(
+      startWith({ status: GameStatusEnum.Waiting } as GameStatus)), gameStarted$);
   }
 
   throw(group: string, selection: string) {
-    this.connection?.send('Throw', group, this.playerName, selection);
+    this.connection?.send(this.throwMethodName, group, this.playerName, selection);
   }
 
   private onResultPipe(): void {
-    let drawn$ = this.connection!.on<[string, UserRspPlayerDto, UserRspPlayerDto]>('Drawn')
+    let drawn$ = this.connection!.on<[string, UserRspPlayerDto, UserRspPlayerDto]>(GameResultEnum.Drawn)
       .pipe(map(([explanation, player1, player2]) => ({ explanation, player1, player2 } as Drawn)));
 
-    let won$ = this.connection!.on<[string, string, UserRspPlayerDto, UserRspPlayerDto]>('Won')
+    let won$ = this.connection!.on<[string, string, UserRspPlayerDto, UserRspPlayerDto]>(GameResultEnum.Won)
       .pipe(map(([winner, explanation, player1, player2]) => ({ winner, explanation, player1, player2 } as Won)));
 
     this.outcome$ = merge(
-      drawn$.pipe(map(value => ({ type: 'drawn', value }))),
-      won$.pipe(map(value => ({ type: 'won', value }))));
+      drawn$.pipe(map(value => ({ type: GameResultEnum.Drawn, value }))),
+      won$.pipe(map(value => ({ type: GameResultEnum.Won, value }))));
   }
 
   private onDisconnectPipe(): void {
-    this.connection!.on('PlayerDisconnected').subscribe(() => {
+    this.connection!.on(this.playerDisconnectedCommand).subscribe(() => {
       this.appService.showSnackbar('Opponent has disconnected.');
       this.appService.router.navigate(['account']);
     });

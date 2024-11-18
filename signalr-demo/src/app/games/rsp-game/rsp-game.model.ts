@@ -1,7 +1,10 @@
 import { UserRspPlayerDto } from "../../models/user.model";
 
+export enum GameStatusEnum { Waiting = 'waiting', Playing = 'playing' }
+export enum GameResultEnum { Drawn = 'DRAW', Won = 'WON' }
+
 export interface GameStatus {
-  status: 'waiting' | 'playing';
+  status: GameStatusEnum;
   winner?: string;
   player1?: UserRspPlayerDto;
   player2?: UserRspPlayerDto;

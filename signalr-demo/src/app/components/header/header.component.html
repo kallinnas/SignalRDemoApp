@@ -15,6 +15,7 @@
     <div fxFlex fxLayout fxLayoutAlign="flex-end" fxHide.xs>
 
         <div fxLayout fxLayoutGap="10px">
+            <button mat-button *ngIf="isAuthenticated()" routerLink="/account">{{accountBtn}}</button>
             <button mat-button *ngIf="appService.isAdminUser()" routerLink="/user-connection-state">{{connBtn}}
             </button>
             <button mat-button *ngIf="isAuthenticated()" routerLink="/game-manager">{{rspBtn}}</button>
