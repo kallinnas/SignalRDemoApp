@@ -3,15 +3,16 @@
     <div *ngIf="(status$ | async) as playStatus; else not_connected" [ngSwitch]="playStatus.status"
         style="height: 100%;">
 
-        <div *ngSwitchCase="'waiting'" fxLayout="column" fxLayoutAlign="center center" style="height: 80%;">
+        <div *ngSwitchCase="GameStatusEnum.Wait" fxLayout="column" fxLayoutAlign="center center" style="height: 80%;">
             <p>Waiting for another player to connect ...</p>
             <mat-spinner></mat-spinner>
         </div>
-        
-        <app-rsp-game *ngSwitchCase="'playing'" [game]="playStatus"></app-rsp-game>
+
+        <app-rsp-game *ngSwitchCase="GameStatusEnum.Play" [game]="playStatus"></app-rsp-game>
     </div>
 
     <ng-template #not_connected>
         <p>Waiting for server connection ...</p>
+        <mat-spinner></mat-spinner>
     </ng-template>
 </div>

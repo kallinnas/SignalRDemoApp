@@ -12,6 +12,7 @@ import { AppService } from '../../services/app.service';
 export class RspGameService {
 
   private connection?: SignalrConnection;
+  private _isConnected = signal<boolean>(false);
   playerName = "";
   isFirstPlayer: boolean = false;
 
@@ -31,22 +32,32 @@ export class RspGameService {
     private appService: AppService,
   ) { }
 
-  initConnection() {
+
+  get isConnected(): boolean {
+    return this._isConnected();
+  }
+
+  initConnection(): void {
     const client = SignalrClient.create(this.httpClient);
-    client.connect(environment.rspGameHubURL).subscribe(
-      connection => {
+    client.connect(environment.rspGameHubURL).subscribe({
+      next: (connection) => {
         this.connection = connection;
+        this._isConnected.set(true); 
         this.onStatusPipe();
         this.onResultPipe();
         this.onDisconnectPipe();
         this.startRspGame();
-      });
+      },
+      error: (err) => {
+        console.error('Connection error:', err);
+        this._isConnected.set(false);
+      },
+    });
   }
 
   disconnectConnection(): void {
-    if (this.connection) {
-      this.connection.close();
-    }
+    this.connection?.close();
+    this._isConnected.set(false);
   }
 
   private startRspGame(): void {
@@ -56,20 +67,22 @@ export class RspGameService {
   }
 
   private onStatusPipe(): void {
+    if (!this.connection) return;
+    
     const waitingForOpponent$: Observable<GameStatus> = this.connection!.on<[]>(this.waitingForOpponentCommand)
       .pipe(
-        map(() => ({ status: GameStatusEnum.Waiting } as GameStatus)),
+        map(() => ({ status: GameStatusEnum.Wait } as GameStatus)),
         tap(() => { this.isFirstPlayer = true; }));
 
     const gameStarted$: Observable<GameStatus> = this.connection!.on<[UserRspPlayerDto, UserRspPlayerDto, string]>(this.gameStartedCommand)
       .pipe(
         map(([player1, player2, group]) => ({
-          status: GameStatusEnum.Playing, player: this.playerName,
+          status: GameStatusEnum.Play, player: this.playerName,
           player1, player2, group
         } as GameStatus)));
 
     this.status$ = merge(waitingForOpponent$.pipe(
-      startWith({ status: GameStatusEnum.Waiting } as GameStatus)), gameStarted$);
+      startWith({ status: GameStatusEnum.Wait } as GameStatus)), gameStarted$);
   }
 
   throw(group: string, selection: string) {
@@ -92,6 +105,7 @@ export class RspGameService {
     this.connection!.on(this.playerDisconnectedCommand).subscribe(() => {
       this.appService.showSnackbar('Opponent has disconnected.');
       this.appService.router.navigate(['account']);
+      this._isConnected.set(false);
     });
   }
 

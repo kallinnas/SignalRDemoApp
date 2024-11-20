@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { GeneralModule } from '../../modules/general.model';
 import { RspGameComponent } from '../rsp-game/rsp-game.component';
 import { Observable } from 'rxjs';
-import { GameStatus } from '../rsp-game/rsp-game.model';
+import { GameStatus, GameStatusEnum } from '../rsp-game/rsp-game.model';
 import { RspGameService } from '../rsp-game/rsp-game.service';
 import { AppService } from '../../services/app.service';
 
@@ -15,8 +15,10 @@ import { AppService } from '../../services/app.service';
 })
 export class GameManagerComponent implements OnInit {
 
+  GameStatusEnum = GameStatusEnum;
+
   get status$(): Observable<GameStatus> | undefined {
-    return this.rspGameService.status$;
+    return this.rspGameService.isConnected ? this.rspGameService.status$ : undefined;
   }
 
   constructor(
@@ -28,4 +30,7 @@ export class GameManagerComponent implements OnInit {
     this.rspGameService.initConnection();
   }
 
+  ngOnDestroy(): void {
+    this.rspGameService.disconnectConnection();
+  }
 }
