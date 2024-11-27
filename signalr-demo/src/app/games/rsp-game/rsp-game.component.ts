@@ -135,7 +135,7 @@ export class RspGameComponent implements OnChanges, OnInit, OnDestroy {
   getPlayerLoses(isForOpponent: boolean) {
     return this.isOpponent() == isForOpponent ?
       (this.player1Stats()?.rspGames ?? 0) - (this.player1Stats()?.rspWins ?? 0) - (this.player1Stats()?.rspDraws ?? 0) :
-      (this.player2Stats()?.rspGames ?? 0) - (this.player2Stats()?.rspWins ?? 0) - (this.player1Stats()?.rspDraws ?? 0);
+      (this.player2Stats()?.rspGames ?? 0) - (this.player2Stats()?.rspWins ?? 0) - (this.player2Stats()?.rspDraws ?? 0);
   }
   // DISPLAY TABLE DATA [END]
 
@@ -166,7 +166,7 @@ export class RspGameComponent implements OnChanges, OnInit, OnDestroy {
       this.disableButtons = false;
       this.startIconAnimation();
       this.outputSubject.next({ displayIcons: '', winnerState: '' });
-    }, 2200);
+    }, 1500);
   }
   // ANIMATION ICON SIGNS [END]
 }
